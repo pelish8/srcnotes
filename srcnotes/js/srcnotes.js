@@ -87,7 +87,7 @@ SRCNotes.sync = {
     },
     
     actionCreate: function (model, options) {
-        localStorage.setItem(model.get('id'), JSON.stringify(model));
+        localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
         options.success(model);
         
         console.log('actionCreate');
@@ -119,7 +119,7 @@ SRCNotes.sync = {
             localStorage.removeItem(item.id);
         }
         model.set('id', helpers.hash(title));
-        console.log(model.toJSON());
+        // console.log(model.toJSON());
         localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
         
         options.success(model);
@@ -213,15 +213,14 @@ SRCNotes.EditView = Backbone.View.extend({
         this.render();
         
         var interval = setInterval($.proxy(function () {
-            console.log(12);
             var el = this.$el.find('.js-edit-form');
-            console.log($.contains(document, el[0]));
+            
             if ($.contains(document, el[0])) {
                 this.$el.find('.js-edit-form').submit();
             } else {
                 clearInterval(interval);
             }
-        }, this), 3000);
+        }, this), 30000);
     },
     
     render: function () {
@@ -249,6 +248,7 @@ SRCNotes.EditView = Backbone.View.extend({
         this.$parent.find('.l-note').removeClass('edit-form-active');
         this.$parent.find('.js-note-name').focus();
         this.$parent.find('.js-note-name').trigger('keyup');
+        this.$el.find('.js-edit-form').submit();
         this.remove();
     }
 });

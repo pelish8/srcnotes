@@ -17,7 +17,7 @@ SRCNotes.sync = {
     },
     
     actionCreate: function (model, options) {
-        localStorage.setItem(model.get('id'), JSON.stringify(model));
+        localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
         options.success(model);
         
         console.log('actionCreate');
@@ -49,7 +49,7 @@ SRCNotes.sync = {
             localStorage.removeItem(item.id);
         }
         model.set('id', helpers.hash(title));
-        console.log(model.toJSON());
+        // console.log(model.toJSON());
         localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
         
         options.success(model);

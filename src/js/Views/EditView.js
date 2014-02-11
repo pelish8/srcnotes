@@ -30,15 +30,14 @@ SRCNotes.EditView = Backbone.View.extend({
         this.render();
         
         var interval = setInterval($.proxy(function () {
-            console.log(12);
             var el = this.$el.find('.js-edit-form');
-            console.log($.contains(document, el[0]));
+            
             if ($.contains(document, el[0])) {
                 this.$el.find('.js-edit-form').submit();
             } else {
                 clearInterval(interval);
             }
-        }, this), 3000);
+        }, this), 30000);
     },
     
     render: function () {
@@ -66,6 +65,7 @@ SRCNotes.EditView = Backbone.View.extend({
         this.$parent.find('.l-note').removeClass('edit-form-active');
         this.$parent.find('.js-note-name').focus();
         this.$parent.find('.js-note-name').trigger('keyup');
+        this.$el.find('.js-edit-form').submit();
         this.remove();
     }
 });
