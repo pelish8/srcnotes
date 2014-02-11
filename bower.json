@@ -1,0 +1,25 @@
+{
+  "name": "note",
+  "version": "0.0.1",
+  "authors": [
+    "Aleksandar Stevic <pelish8@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/js/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.1.0",
+    "underscore": "~1.5.2",
+    "jquery": "~2.1.0",
+    "pure": "~0.4.1",
+    "font-awesome": "~4.0.3",
+    "jQuery.dotdotdot": "~1.6.12"
+  }
+}

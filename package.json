@@ -1,0 +1,24 @@
+{
+  "name": "note",
+  "version": "0.0.1",
+  "description": "Note app",
+  "main": "app://./index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "note"
+  ],
+  "author": "Aleksandar Stevic",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-less": "~0.9.0",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.8.0"
+  },
+  "window": {
+    "toolbar": false
+  }
+}
