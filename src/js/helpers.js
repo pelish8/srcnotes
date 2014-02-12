@@ -56,12 +56,12 @@ var helpers = {
     
     // hash String function http://www.cse.yorku.ca/~oz/hash.html
     hash: function (str) {
-        var hash = 0,
+        var hash = '',
             c;
         for (i = 0; i < str.length; i++) {
             c = str.charCodeAt(i);
             hash += c;
         }
-        return hash;
+        return 'id-' + parseInt(hash, 16);
     }
 };

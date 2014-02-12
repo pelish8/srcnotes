@@ -57,7 +57,6 @@ SRCNotes.EditView = Backbone.View.extend({
             title: $target.find('input').val(),
             content: $target.find('textarea').val()
         });
-        
     },
     
     showList: function (ev) {

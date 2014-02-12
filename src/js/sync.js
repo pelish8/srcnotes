@@ -2,28 +2,26 @@ SRCNotes.sync = {
     action: function (method, model, options) {
         switch (method) {
         case 'create':
-            this.actionCreate(model, options);
+            this.createAction(model, options);
             break;
         case 'read':
-            this.actionRead(model, options);
+            this.readAction(model, options);
             break;
         case 'update':
-            this.actionUpdate(model, options);
+            this.updateAction(model, options);
             break;
         case 'delete':
-            this.actionDelete(model, options);
+            this.deleteAction(model, options);
             break;
         }
     },
     
-    actionCreate: function (model, options) {
+    createAction: function (model, options) {
         localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
-        options.success(model);
-        
-        console.log('actionCreate');
+        options.success(model.toJSON());
     },
     
-    actionRead: function (model, options) {
+    readAction: function (model, options) {
         var store = [];
         
         for (var key in localStorage) {
@@ -32,16 +30,13 @@ SRCNotes.sync = {
                 store.push(item);
             }
         }
-        console.log(store);
         options.success(store);
-        console.log('actionRead');
     },
     
-    actionUpdate: function (model, options) {
-        console.log(model.get('id'));
+    updateAction: function (model, options) {
         var item = this.getItem(model.get('id'));
         if (!item) {
-            return this.actionCreate(model, options);
+            return this.createAction(model, options);
         }
         
         var title = model.get('title');
@@ -49,16 +44,13 @@ SRCNotes.sync = {
             localStorage.removeItem(item.id);
         }
         model.set('id', helpers.hash(title));
-        // console.log(model.toJSON());
         localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
         
-        options.success(model);
-        console.log('actionUpdate');
+        options.success(model.toJSON());
     },
     
-    actionDelete: function (model, options) {
+    deleteAction: function (model, options) {
         localStorage.removeItem(item.id);
-        console.log('actionDelete');
     },
     
     getItem: function (id) {
@@ -72,28 +64,5 @@ SRCNotes.sync = {
 };
 
 Backbone.sync = function (method, model, options) {
-    console.log(arguments);
     SRCNotes.sync.action(method, model, options);
-    
-    // switch (method) {
-    // case 'update':
-    //     localStorage[model.escape('id')] = JSON.stringify(model);
-    //     break;
-    // case 'read':
-    //     var store = [];
-    //     _.each(localStorage, function (val, index) {
-    //         console.log(index);
-    //         store.push(JSON.parse(val));
-    //     });
-    //     options.success(store);
-    //     break;
-    // 
-    // case 'create':
-    //     break;
-    // 
-    // case 'delete':
-    //     break;
-    // default:
-    //     
-    // }
 };
