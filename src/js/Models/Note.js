@@ -5,7 +5,7 @@ SRCNotes.Note = Backbone.Model.extend({
         this.set('id', helpers.hash(atributes.title));
         this.set('title', atributes.title);
         this.set('content', atributes.content);
-        this.set('date', new Date());
+        this.set('date', atributes.date || new Date());
         this.set('type', 'srcnote');
         
         this.on('change', function () {

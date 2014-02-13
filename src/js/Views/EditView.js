@@ -7,22 +7,6 @@ SRCNotes.EditView = Backbone.View.extend({
         'click a.js-back': 'showList'
     },
     
-    template: _.template(
-        '<form action="#" method="post" class="pure-form js-edit-form pure-g">' +
-            '<div class="pure-g action-menu">' +
-                '<div class="pure-u-5-24">' +
-                    '<a class="js-back pure-button"><i class="fa fa-angle-left"></i></a>' +
-                '</div>' +
-                '<div class="pure-u-19-24">' +
-                    '<input type="text" value="{{ title }}" class="note-name">' +
-                '</div>' +
-            '</div>' +
-            '<div class="note-content">' +
-                '<textarea placeholder="Note...">{{ content }}</textarea>' +
-            '</div>' +
-        '</form>'
-    ),
-    
     initialize: function (cfg) {
         _.bindAll(this, 'saveContent', 'render');
         this.$parent = cfg.$parent;
@@ -41,7 +25,7 @@ SRCNotes.EditView = Backbone.View.extend({
     },
     
     render: function () {
-        $(this.el).append(this.template({
+        $(this.el).append(template('template-edit-view', {
             title: this.model.escape('title'),
             content: this.model.escape('content')
         }));

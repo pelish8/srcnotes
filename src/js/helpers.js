@@ -65,3 +65,8 @@ var helpers = {
         return 'id-' + parseInt(hash, 16);
     }
 };
+
+function template(id, data) {
+    var tpl = _.template($('#' + id).text());
+    return tpl(data);
+}

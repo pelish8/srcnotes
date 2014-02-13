@@ -1,40 +1,36 @@
 SRCNotes.ListView = Backbone.View.extend({
-    el: $('#srcnotes'),
+    el: '#srcnotes',
 
     events: {
         'keyup input.js-note-name': 'findItem',
         'submit form.js-add-new-item': 'addItem'
     },
-
-    template: _.template(
-        '<div class="l-note"><ul id="notes"></ul></div>'
-    ),
-
-    template_search_feld: _.template(
-        // '<div id="header">BnoteOX</div>' +
-        '<form action="#" method="post" class="pure-form js-add-new-item">' +
-        '<input type="text" class="note-name js-note-name" placeholder="Note name"/></form>'
-    ),
     
     initialize: function () {
         _.bindAll(this, 'render', 'addItem', 'moveFocus');
 
         this.items = new SRCNotes.Notes();
-
+        
+        this.listenTo(this.items, 'sync', $.proxy(function (items) {
+            items.sortBy(function (item) {
+                return item.get('date').getTime();
+            });
+            console.log(items);
+        }, this));
         this.items.on('add', function (model) {
-
+        
             var t = new SRCNotes.NoteView({
                 model: model,
                 '$parent': this.$el
             });
-
+        
             this.$notes.prepend(t.render().el);
         }, this);
 
     },
 
     render: function () {
-        var $app = $(this.template()).prepend(this.template_search_feld());
+        var $app = $(template('template-list-view-l'));
         this.$el.append($app);
         this.$notes = this.$el.find('#notes');
         $app.find('.js-note-name').focus();

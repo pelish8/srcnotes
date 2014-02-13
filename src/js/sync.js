@@ -27,6 +27,7 @@ SRCNotes.sync = {
         for (var key in localStorage) {
             var item = this.getItem(key);
             if (item.type === 'srcnote') {
+                item.date = new Date(item.date);
                 store.push(item);
             }
         }

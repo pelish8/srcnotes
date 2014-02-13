@@ -68,6 +68,11 @@ var helpers = {
         return 'id-' + parseInt(hash, 16);
     }
 };
+
+function template(id, data) {
+    var tpl = _.template($('#' + id).text());
+    return tpl(data);
+}
 SRCNotes.sync = {
     action: function (method, model, options) {
         switch (method) {
@@ -97,6 +102,7 @@ SRCNotes.sync = {
         for (var key in localStorage) {
             var item = this.getItem(key);
             if (item.type === 'srcnote') {
+                item.date = new Date(item.date);
                 store.push(item);
             }
         }
@@ -143,7 +149,7 @@ SRCNotes.Note = Backbone.Model.extend({
         this.set('id', helpers.hash(atributes.title));
         this.set('title', atributes.title);
         this.set('content', atributes.content);
-        this.set('date', new Date());
+        this.set('date', atributes.date || new Date());
         this.set('type', 'srcnote');
         
         this.on('change', function () {
@@ -154,6 +160,8 @@ SRCNotes.Note = Backbone.Model.extend({
 SRCNotes.Notes = Backbone.Collection.extend({
     model: SRCNotes.Note
 });
+
+
 SRCNotes.EditView = Backbone.View.extend({
     tagName: 'div',
     className: 'edit-form',
@@ -162,22 +170,6 @@ SRCNotes.EditView = Backbone.View.extend({
         'submit form.js-edit-form': 'saveContent',
         'click a.js-back': 'showList'
     },
-    
-    template: _.template(
-        '<form action="#" method="post" class="pure-form js-edit-form pure-g">' +
-            '<div class="pure-g action-menu">' +
-                '<div class="pure-u-5-24">' +
-                    '<a class="js-back pure-button"><i class="fa fa-angle-left"></i></a>' +
-                '</div>' +
-                '<div class="pure-u-19-24">' +
-                    '<input type="text" value="{{ title }}" class="note-name">' +
-                '</div>' +
-            '</div>' +
-            '<div class="note-content">' +
-                '<textarea placeholder="Note...">{{ content }}</textarea>' +
-            '</div>' +
-        '</form>'
-    ),
     
     initialize: function (cfg) {
         _.bindAll(this, 'saveContent', 'render');
@@ -197,7 +189,7 @@ SRCNotes.EditView = Backbone.View.extend({
     },
     
     render: function () {
-        $(this.el).append(this.template({
+        $(this.el).append(template('template-edit-view', {
             title: this.model.escape('title'),
             content: this.model.escape('content')
         }));
@@ -225,42 +217,38 @@ SRCNotes.EditView = Backbone.View.extend({
     }
 });
 SRCNotes.ListView = Backbone.View.extend({
-    el: $('#srcnotes'),
+    el: '#srcnotes',
 
     events: {
         'keyup input.js-note-name': 'findItem',
         'submit form.js-add-new-item': 'addItem'
     },
-
-    template: _.template(
-        '<div class="l-note"><ul id="notes"></ul></div>'
-    ),
-
-    template_search_feld: _.template(
-        // '<div id="header">BnoteOX</div>' +
-        '<form action="#" method="post" class="pure-form js-add-new-item">' +
-        '<input type="text" class="note-name js-note-name" placeholder="Note name"/></form>'
-    ),
     
     initialize: function () {
         _.bindAll(this, 'render', 'addItem', 'moveFocus');
 
         this.items = new SRCNotes.Notes();
-
+        
+        this.listenTo(this.items, 'sync', $.proxy(function (items) {
+            items.sortBy(function (item) {
+                return item.get('date').getTime();
+            });
+            console.log(items);
+        }, this));
         this.items.on('add', function (model) {
-
+        
             var t = new SRCNotes.NoteView({
                 model: model,
                 '$parent': this.$el
             });
-
+        
             this.$notes.prepend(t.render().el);
         }, this);
 
     },
 
     render: function () {
-        var $app = $(this.template()).prepend(this.template_search_feld());
+        var $app = $(template('template-list-view-l'));
         this.$el.append($app);
         this.$notes = this.$el.find('#notes');
         $app.find('.js-note-name').focus();
@@ -314,10 +302,6 @@ SRCNotes.NoteView = Backbone.View.extend({
         'click a': 'openNote'
     },
     
-    template: _.template(
-        '<a href="{{ title }}" class="js-open-note">{{ title }}</a>'
-    ),
-    
     initialize: function (cfg) {
         _.bindAll(this, 'render', 'openNote');
         this.$parent = cfg.$parent;
@@ -332,7 +316,10 @@ SRCNotes.NoteView = Backbone.View.extend({
     },
     
     render: function () {
-        this.$el.html(this.template({title: this.model.escape('title')}));
+        this.$el.html(template('tempate-note', {
+            title: this.model.escape('title')
+        }));
+        
         if (this.model.get('show')) {
             this.$el.show('fast');
         } else {

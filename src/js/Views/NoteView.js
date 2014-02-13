@@ -6,10 +6,6 @@ SRCNotes.NoteView = Backbone.View.extend({
         'click a': 'openNote'
     },
     
-    template: _.template(
-        '<a href="{{ title }}" class="js-open-note">{{ title }}</a>'
-    ),
-    
     initialize: function (cfg) {
         _.bindAll(this, 'render', 'openNote');
         this.$parent = cfg.$parent;
@@ -24,7 +20,10 @@ SRCNotes.NoteView = Backbone.View.extend({
     },
     
     render: function () {
-        this.$el.html(this.template({title: this.model.escape('title')}));
+        this.$el.html(template('tempate-note', {
+            title: this.model.escape('title')
+        }));
+        
         if (this.model.get('show')) {
             this.$el.show('fast');
         } else {
