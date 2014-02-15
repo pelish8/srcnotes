@@ -56,7 +56,7 @@ SRCNotes.ListView = Backbone.View.extend({
   },
 
   findItem: function (ev) {
-    if (ev && ev.keyCode === 40) {
+    if (ev.keyCode === 40) {
       // focus notes 
       this.focusNotes(ev);
       ev.preventDefault();
@@ -106,7 +106,7 @@ SRCNotes.ListView = Backbone.View.extend({
 
   clearSearch: function () {
     this.$el.find('.js-note-name').val('');
-    this.findItem();
+    this.filterNotes();
   },
   // colled from findItem
   focusNotes: function (ev) {
@@ -144,7 +144,6 @@ SRCNotes.ListView = Backbone.View.extend({
 
   moveDown: function () {
     if (this.index < (this.$visibleNotes.size() - 1)) {
-      
       this.index++;
       this.$visibleNotes.eq(this.index - 1).removeClass('focus');
       this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
@@ -156,13 +155,11 @@ SRCNotes.ListView = Backbone.View.extend({
     if (this.index > 0) {
       this.index--;
       this.$visibleNotes.eq(this.index).addClass('focus');
-      
       this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
-      
     } else {
       var nameInput = this.$el.find('.js-note-name');
       nameInput.focus();
-      nameInput.get(0).selectionEnd = nameInput.length;
+      nameInput.get(0).selectionEnd = nameInput.val().length;
       this.index--;
     }
     this.$visibleNotes.eq(this.index + 1).removeClass('focus');
