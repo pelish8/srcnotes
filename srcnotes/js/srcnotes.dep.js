@@ -9110,6 +9110,44 @@ return jQuery;
 
 }));
 
+/*!
+ * jQuery.scrollToElement
+ * Licensed under MIT
+ * https://gist.github.com/pelish8/9023893
+ * @author Aleksandar Stevic
+ * @version 0.0.1
+ */
+; (function ($) {
+  $.fn.scrollToElement = function (el, options) {
+   var $el = jQuery(el),
+     parentTop = this.scrollTop(),
+     parentBottom = parentTop + this.height(),
+     elTop = $el.position().top,
+     elBottom = elTop + $el.height() + parentTop,
+     offset;
+   if (elBottom >= parentBottom) {
+     // go down
+     offset = parentTop + elBottom - parentBottom;
+     if (options) {
+         this.animate({
+             scrollTop: offset
+         }, options);
+     } else {
+       this.scrollTop(offset);
+     }
+   } else if (elTop < 0) {
+     // go up
+     offset = parentTop + elTop;
+     if (options) {
+         this.animate({
+           scrollTop: offset
+         }, options);
+     } else {
+       this.scrollTop(offset);
+     }
+   }
+ }
+})(jQuery);
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

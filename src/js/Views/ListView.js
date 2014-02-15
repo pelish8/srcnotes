@@ -127,24 +127,27 @@ SRCNotes.ListView = Backbone.View.extend({
 
   moveCursor: function (ev) {
     // console.log(ev.target);
+    ev.preventDefault();
     switch (ev.keyCode) {
     case 40:
-      this.moveDown();
+      this.moveDown(ev);
       break;
     case 38:
-      this.moveUp();
+      this.moveUp(ev);
       break;
     case 13:
       // open note when enter key is pressed
-      this.openNote();
+      this.openNote(ev);
       break;
     }
   },
 
   moveDown: function () {
     if (this.index < (this.$visibleNotes.size() - 1)) {
+      
       this.index++;
       this.$visibleNotes.eq(this.index - 1).removeClass('focus');
+      this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
       this.$visibleNotes.eq(this.index).addClass('focus');
     }
   },
@@ -153,6 +156,9 @@ SRCNotes.ListView = Backbone.View.extend({
     if (this.index > 0) {
       this.index--;
       this.$visibleNotes.eq(this.index).addClass('focus');
+      
+      this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
+      
     } else {
       var nameInput = this.$el.find('.js-note-name');
       nameInput.focus();

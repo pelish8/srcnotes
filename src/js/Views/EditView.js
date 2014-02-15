@@ -43,14 +43,13 @@ SRCNotes.EditView = Backbone.View.extend({
       content: $target.find('textarea').val()
     });
   },
-    
+
   showList: function (ev) {
     ev.preventDefault();
     this.$el.find('textarea').blur();
     this.$el.find('.note-name').blur();
     this.$parent.find('.l-note').removeClass('edit-form-active');
-    this.$parent.find('.js-note-name').focus();
-    this.$parent.find('.js-note-name').trigger('keyup');
+    this.$parent.find('.js-note-name').focus().trigger('keyup');
     this.$el.find('.js-edit-form').submit();
     this.$parent.trigger('clearSearch');
     this.remove();

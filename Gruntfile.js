@@ -51,6 +51,7 @@ module.exports = function (grunt) {
       'dep.js': {
         src: [
           './components/jquery/jquery.js',
+          './components/jQuery.scrollToElement/jquery.scrollToElement.js',
           './components/underscore/underscore.js',
           './components/backbone/backbone.js'
         ],
