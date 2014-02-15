@@ -4,11 +4,12 @@ SRCNotes.EditView = Backbone.View.extend({
 
   events: {
     'submit form.js-edit-form': 'saveContent',
-    'click a.js-back': 'showList'
+    'click a.js-back': 'showList',
+    'keyup': 'closeEditView'
   },
     
   initialize: function (cfg) {
-    _.bindAll(this, 'saveContent', 'render');
+    _.bindAll(this, 'saveContent', 'render', 'closeEditView');
     this.$parent = cfg.$parent;
 
     this.render();
@@ -53,5 +54,11 @@ SRCNotes.EditView = Backbone.View.extend({
     this.$el.find('.js-edit-form').submit();
     this.$parent.trigger('clearSearch');
     this.remove();
+  },
+  
+  closeEditView: function (ev) {
+    if (ev.keyCode === 27) {
+      this.showList(ev);
+    }
   }
 });
