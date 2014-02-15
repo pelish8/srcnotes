@@ -5,7 +5,7 @@ module.exports = function (grunt) {
         globals: {
           browser: true,
           jquery: true,
-          node: true,
+          node: true
         },
         indent: 2,
         white: true,
@@ -17,7 +17,7 @@ module.exports = function (grunt) {
         latedef: true,
         noarg: true,
         nonbsp: true,
-        // es3: true, // older browsers support http://www.jshint.com/docs/options/#es3
+        es3: true, // older browsers support http://www.jshint.com/docs/options/#es3
         maxcomplexity: 5 //http://en.wikipedia.org/wiki/Cyclomatic_complexity
       },
       all: ['Gruntfile.js', 'src/js/**/*.js']
@@ -25,7 +25,7 @@ module.exports = function (grunt) {
     sass: {
       development: {
         options: {
-          includePaths: ['./src/sass/'],
+          includePaths: ['./src/sass/']
         },
         files: {
           './srcnotes/css/srcnotes.css': './src/sass/master.scss'
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
         ],
         dest: './srcnotes/js/srcnotes.js',
         options: {
-          banner: '(function ($, _, Backbone) {\n var SRCNotes = {};\n\n',
+          banner: '; (function ($, _, Backbone) {\n var SRCNotes = {};\n\n',
           footer: '\n}).call(this, jQuery, _, Backbone);\n'
         }
       },
@@ -70,7 +70,7 @@ module.exports = function (grunt) {
         files: './components/*',
         task: ['concat:dep.js']
       }
-    },
+    }
   });
   // grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');

@@ -1,4 +1,4 @@
-(function ($, _, Backbone) {
+; (function ($, _, Backbone) {
  var SRCNotes = {};
 
 _.templateSettings = {

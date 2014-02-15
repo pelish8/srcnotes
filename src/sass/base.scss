@@ -1,0 +1,22 @@
+#srcnotes {
+  color: $font-color;
+  background: $background-color;
+  font-family: $font-family;
+    
+  input, textarea {
+    font-family: $font-family;
+  }
+
+  textarea {
+    color: $font-color-light;
+
+    &:focus {
+      color: $font-color;
+      background: $input-fucus-color;
+    }
+  }
+
+  button {
+    border: 0;
+  }
+}

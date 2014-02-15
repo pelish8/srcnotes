@@ -1,0 +1,22 @@
+// font-awesome path
+@import "../../components/font-awesome/scss/_variables";
+$fa-font-path: "../../components/font-awesome/fonts";
+//$fa-css-prefix: "icon";
+
+// my custom variables
+$font-color: rgb(224, 223, 220);
+$font-color-light: #b4b4b4;
+
+$border-color: rgb(50, 49, 47);
+
+$background-color: rgb(58, 58, 55);
+
+$edit-form-button: $border-color;
+
+$edit-form-button-text-color: $font-color;
+
+$hover-color: rgb(67, 66, 64);
+
+$input-fucus-color: rgb(66, 66, 63);
+
+$font-family: 'Lucida Grande', Tahoma, Verdana, Arial, sans-serif;
