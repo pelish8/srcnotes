@@ -185,7 +185,8 @@ SRCNotes.ListView = Backbone.View.extend({
   el: '#srcnotes',
 
   events: {
-    'keyup input.js-note-name': 'findItem',
+    'keydown input.js-note-name': 'findItem',
+    'keyup input.js-note-name': 'filterNotes',
     'submit form.js-add-new-item': 'addItem',
     'keydown #notes': 'moveCursor'
   },
@@ -238,20 +239,20 @@ SRCNotes.ListView = Backbone.View.extend({
     $app.find('.js-note-name').focus();
   },
 
+  // intercept key event to find if we need to react
   findItem: function (ev) {
     if (ev.keyCode === 40) {
       // focus notes 
       this.focusNotes(ev);
       ev.preventDefault();
-    } else {
-      // clearTimeout(this.searchTimeout);
-      // waite for user to stop writeng that search
-      // this.searchTimeout = setTimeout(this.filterNotes);
-      this.filterNotes();
-
+    } else if (ev.shiftKey && ev.keyCode === 13) {
+      // shift + enter opens first note in list
+      ev.preventDefault();
+      this.$notes.find('li.js-list-item:visible').eq(0).find('a').trigger('click');
     }
   },
-  
+
+  // @todo waite for user to stop writing name
   filterNotes: function () {
     var name = this.$el.find('.js-note-name').val(),
     pattern = new RegExp('^' + name);//, 'i'); case insensitive
