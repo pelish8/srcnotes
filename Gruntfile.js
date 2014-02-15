@@ -56,6 +56,15 @@ module.exports = function (grunt) {
           './components/backbone/backbone.js'
         ],
         dest: './srcnotes/js/srcnotes.dep.js'
+      },
+      'dep.css': {
+        src: [
+          './components/pure/base.css',
+          './components/pure/forms.css',
+          './components/pure/grids.css',
+          './components/pure/buttons.css'
+        ],
+        dest: './srcnotes/css/srcnotes.dep.css'
       }
     },
     watch: {
@@ -69,7 +78,11 @@ module.exports = function (grunt) {
       },
       'dep.js': {
         files: './components/*',
-        task: ['concat:dep.js']
+        tasks: ['concat:dep.js']
+      },
+      gruntFile: {
+        files: './Gruntfile.js',
+        tasks: ['build']
       }
     }
   });
