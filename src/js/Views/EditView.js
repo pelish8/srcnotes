@@ -9,7 +9,7 @@ SRCNotes.EditView = Backbone.View.extend({
   },
     
   initialize: function (cfg) {
-    _.bindAll(this, 'saveContent', 'render', 'closeEditView');
+    _.bindAll(this, 'saveContent', 'render', 'closeEditView', 'onBeforeunLoad');
     this.$parent = cfg.$parent;
 
     this.render();
@@ -23,6 +23,15 @@ SRCNotes.EditView = Backbone.View.extend({
         clearInterval(interval);
       }
     }, this), 30000);
+    
+    window.onbeforeunload = this.onBeforeunLoad;
+  },
+  
+  onBeforeunLoad: function () {
+    this.model.save({
+      title: this.$el.find('input').val(),
+      content: this.$el.find('textarea').val()
+    });
   },
 
   render: function () {
