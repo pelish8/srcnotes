@@ -4,64 +4,6 @@ _.templateSettings = {
 
 
 var helpers = {
-  // check if elemen is in scroll view
-  isInView: function (elem) {
-    var docViewTop = $(window).scrollTop(),
-    docViewBottom = docViewTop + $(window).height(),
-    elemTop = $(elem).offset().top,
-    elemBottom = elemTop + $(elem).height();
-
-    return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom) &&
-    (elemBottom <= docViewBottom) &&  (elemTop >= docViewTop));
-  },
-
-  listViewArrowDown: function (ev) {
-    var $target = $(ev.target),
-    active = $('#srcnotes').find('.js-list-item.focus'),
-    next = active.next(':visible');
-
-    if ($target.hasClass('js-note-name')) {
-      // move foucs to the first note
-      active.removeClass('focus');
-      $('#srcnotes').find('.js-list-item:visible:first').addClass('focus');
-
-    } else if (next.size()) {
-      if (!this.isInView(next)) {
-        $('#notes').animate({
-          scrollTop: next.offset().top
-        });
-      }
-      active.removeClass('focus');
-      next.addClass('focus');
-    }
-  },
-
-  listViewArrowUp: function (ev) {
-    $target = $(ev.target);
-    active = $('#srcnotes').find('.js-list-item.focus');
-    if (!$target.hasClass('js-note-name')) {
-      active.removeClass('focus');
-      var prev = active.prev(':visible');
-      if (prev.size()) {
-        if (!this.isInView(prev)) {
-          $('#notes').animate({
-            scrollTop: prev.offset().top
-          });
-        }
-        prev.addClass('focus');
-      } else {
-        // move foucs to end of input field
-        var $input = $('#srcnotes .js-note-name'),
-        oldValue = $input.val();
-
-        $input.get(0).selectionEnd = oldValue.length;
-        setTimeout(function () {
-          $input.val(oldValue);
-        });
-      }
-    }
-  },
-
   // hash String function http://www.cse.yorku.ca/~oz/hash.html
   hash: function (str) {
     var hash = '',

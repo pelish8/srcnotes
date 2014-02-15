@@ -71,6 +71,8 @@
   border-top: solid 0.32em #32312f;
   padding: 0;
   margin: 0; }
+  #notes:focus {
+    outline: none; }
   #notes li.list-items {
     list-style-type: none;
     border-bottom: solid 1px #32312f; }

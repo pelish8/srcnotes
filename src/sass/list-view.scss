@@ -26,6 +26,11 @@
 #notes {
   background: $background-color;
   border-top: solid 0.32em $border-color;
+  
+  &:focus {
+    outline: none;
+  }
+  
   li.list-items {
     list-style-type: none;
     border-bottom: solid 1px $border-color;

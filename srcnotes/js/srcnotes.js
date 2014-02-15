@@ -7,64 +7,6 @@ _.templateSettings = {
 
 
 var helpers = {
-  // check if elemen is in scroll view
-  isInView: function (elem) {
-    var docViewTop = $(window).scrollTop(),
-    docViewBottom = docViewTop + $(window).height(),
-    elemTop = $(elem).offset().top,
-    elemBottom = elemTop + $(elem).height();
-
-    return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom) &&
-    (elemBottom <= docViewBottom) &&  (elemTop >= docViewTop));
-  },
-
-  listViewArrowDown: function (ev) {
-    var $target = $(ev.target),
-    active = $('#srcnotes').find('.js-list-item.focus'),
-    next = active.next(':visible');
-
-    if ($target.hasClass('js-note-name')) {
-      // move foucs to the first note
-      active.removeClass('focus');
-      $('#srcnotes').find('.js-list-item:visible:first').addClass('focus');
-
-    } else if (next.size()) {
-      if (!this.isInView(next)) {
-        $('#notes').animate({
-          scrollTop: next.offset().top
-        });
-      }
-      active.removeClass('focus');
-      next.addClass('focus');
-    }
-  },
-
-  listViewArrowUp: function (ev) {
-    $target = $(ev.target);
-    active = $('#srcnotes').find('.js-list-item.focus');
-    if (!$target.hasClass('js-note-name')) {
-      active.removeClass('focus');
-      var prev = active.prev(':visible');
-      if (prev.size()) {
-        if (!this.isInView(prev)) {
-          $('#notes').animate({
-            scrollTop: prev.offset().top
-          });
-        }
-        prev.addClass('focus');
-      } else {
-        // move foucs to end of input field
-        var $input = $('#srcnotes .js-note-name'),
-        oldValue = $input.val();
-
-        $input.get(0).selectionEnd = oldValue.length;
-        setTimeout(function () {
-          $input.val(oldValue);
-        });
-      }
-    }
-  },
-
   // hash String function http://www.cse.yorku.ca/~oz/hash.html
   hash: function (str) {
     var hash = '',
@@ -237,13 +179,16 @@ SRCNotes.ListView = Backbone.View.extend({
 
   events: {
     'keyup input.js-note-name': 'findItem',
-    'submit form.js-add-new-item': 'addItem'
+    'submit form.js-add-new-item': 'addItem',
+    'keydown #notes': 'moveCursor'
   },
 
   templates: {},
 
   initialize: function () {
-    _.bindAll(this, 'render', 'addItem', 'moveFocus', 'clearSearch');
+    _.bindAll(this, 'render', 'addItem',
+              'moveFocus', 'clearSearch',
+              'moveCursor', 'filterNotes');
 
     this.items = new SRCNotes.Notes();
 
@@ -287,19 +232,30 @@ SRCNotes.ListView = Backbone.View.extend({
   },
 
   findItem: function (ev) {
+    if (ev && ev.keyCode === 40) {
+      // focus notes 
+      this.focusNotes(ev);
+      ev.preventDefault();
+    } else {
+      // clearTimeout(this.searchTimeout);
+      // waite for user to stop writeng that search
+      // this.searchTimeout = setTimeout(this.filterNotes);
+      this.filterNotes();
+
+    }
+  },
+  
+  filterNotes: function () {
     var name = this.$el.find('.js-note-name').val(),
     pattern = new RegExp('^' + name);//, 'i'); case insensitive
-    if (ev && ev.keyCode === 40) {
-      $(ev.target).blur();
-    } else {
-      this.items.each(function (model) {
-        if (!pattern.test(model.get('title'))) {
-          model.trigger('hide');
-        } else {
-          model.trigger('show');
-        }
-      });
-    }
+
+    this.items.each(function (model) {
+      if (!pattern.test(model.get('title'))) {
+        model.trigger('hide');
+      } else {
+        model.trigger('show');
+      }
+    });
   },
 
   addItem: function (ev) {
@@ -327,6 +283,64 @@ SRCNotes.ListView = Backbone.View.extend({
   clearSearch: function () {
     this.$el.find('.js-note-name').val('');
     this.findItem();
+  },
+  // colled from findItem
+  focusNotes: function (ev) {
+    // every time the down arrow key is pressed we tray to move the focus to
+    // firt visible note so we can navigate through notes list with arrow key
+    this.index = 0;
+    // save to use in moveCursor method
+    this.$visibleNotes = this.$notes.find('li.js-list-item:visible');
+    if (this.$visibleNotes.size()) {
+      $(ev.target).blur();// move focus from input fild (note-name)
+      this.$notes.focus();
+      this.$visibleNotes.removeClass('focus');
+      this.$visibleNotes.eq(this.index).addClass('focus');
+    } else {
+      this.$visibleNotes = null;
+    }
+  },
+
+  moveCursor: function (ev) {
+    // console.log(ev.target);
+    switch (ev.keyCode) {
+    case 40:
+      this.moveDown();
+      break;
+    case 38:
+      this.moveUp();
+      break;
+    case 13:
+      // open note when enter key is pressed
+      this.openNote();
+      break;
+    }
+  },
+
+  moveDown: function () {
+    if (this.index < (this.$visibleNotes.size() - 1)) {
+      this.index++;
+      this.$visibleNotes.eq(this.index - 1).removeClass('focus');
+      this.$visibleNotes.eq(this.index).addClass('focus');
+    }
+  },
+
+  moveUp: function () {
+    if (this.index > 0) {
+      this.index--;
+      this.$visibleNotes.eq(this.index).addClass('focus');
+    } else {
+      var nameInput = this.$el.find('.js-note-name');
+      nameInput.focus();
+      nameInput.get(0).selectionEnd = nameInput.length;
+      this.index--;
+    }
+    this.$visibleNotes.eq(this.index + 1).removeClass('focus');
+  },
+  
+  openNote: function () {
+    this.$visibleNotes.eq(this.index).find('a').trigger('click');
+    this.$visibleNotes.eq(this.index).removeClass('focus');
   }
 });
 
@@ -371,23 +385,9 @@ SRCNotes.NoteView = Backbone.View.extend({
   }
 });
 
-$(document).keydown(function (ev) {
-  switch (ev.keyCode) {
-    case 13:
-      $('#srcnotes').find('.js-list-item.focus').find('a').click();
-      break;
-    case 40:
-      helpers.listViewArrowDown(ev);
-      break;
-    case 38:
-      helpers.listViewArrowUp(ev);
-      break;
-  }
-});
-
-var app = new SRCNotes.ListView();
+var notesapp = new SRCNotes.ListView();
 // new SRCNotes.Notes();
-app.items.fetch();
-app.render();
+notesapp.items.fetch();
+notesapp.render();
 
 }).call(this, jQuery, _, Backbone);
