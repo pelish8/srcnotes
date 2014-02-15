@@ -15,8 +15,8 @@
     "tests"
   ],
   "dependencies": {
-    "backbone": "~1.1.0",
-    "underscore": "~1.5.2",
+    "backbone": "~1.1.1",
+    "underscore": "~1.6.0",
     "jquery": "~2.1.0",
     "pure": "~0.4.1",
     "font-awesome": "~4.0.3",
