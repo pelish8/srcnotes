@@ -16,7 +16,7 @@ SRCNotes.ListView = Backbone.View.extend({
               'moveCursor', 'filterNotes');
 
     this.items = new SRCNotes.Notes();
-
+    this.items.fetch();
     this.items.on('add', function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
@@ -35,7 +35,12 @@ SRCNotes.ListView = Backbone.View.extend({
         console.log(model);
       }
     }, this);
-
+    
+    this.items.on('reset', function () {
+      this.render();
+    }, this);
+    
+    // this.items.fetch();
     this.$el.on('clearSearch', this.clearSearch);
   },
 
@@ -43,7 +48,7 @@ SRCNotes.ListView = Backbone.View.extend({
     var $app = $(template('template-list-view-l'));
     this.$el.append($app);
     this.$notes = this.$el.find('#notes');
-
+    this.items.sort();
     this.items.each(function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,

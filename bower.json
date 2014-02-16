@@ -20,6 +20,7 @@
     "jquery": "~2.1.0",
     "pure": "~0.4.1",
     "font-awesome": "~4.0.3",
-    "jQuery.scrollToElement": "https://gist.github.com/9023893.git"
+    "jQuery.scrollToElement": "https://gist.github.com/9023893.git",
+    "localforage": "*"
   }
 }

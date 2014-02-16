@@ -52,6 +52,7 @@ module.exports = function (grunt) {
         src: [
           './components/jquery/jquery.js',
           './components/jQuery.scrollToElement/jquery.scrollToElement.js',
+          './components/localforage/dist/localforage.js',
           './components/underscore/underscore.js',
           './components/backbone/backbone.js'
         ],
@@ -81,7 +82,7 @@ module.exports = function (grunt) {
         tasks: ['concat:dep.js']
       },
       gruntFile: {
-        files: './Gruntfile.js',
+        files: ['./Gruntfile.js', './index.html'],
         tasks: ['build']
       }
     }

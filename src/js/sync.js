@@ -1,14 +1,27 @@
 SRCNotes.sync = {
   action: function (method, model, options) {
+    var _this = this;
     switch (method) {
     case 'create':
       this.createAction(model, options);
       break;
     case 'read':
-      this.readAction(model, options);
+      // this.readAction(model, options);
+      this.getStoreKeys(function (keys) {
+        if (!keys) {
+          return;
+        }
+        _this.readAction.call(_this, keys, model, options);
+      });
       break;
     case 'update':
-      this.updateAction(model, options);
+      // this.updateAction(model, options);
+      this.getStoreKeys(function (keys) {
+        if (!keys) {
+          return;
+        }
+        _this.updateAction.call(_this, keys, model, options);
+      });
       break;
     case 'delete':
       this.deleteAction(model, options);
@@ -17,52 +30,80 @@ SRCNotes.sync = {
   },
 
   createAction: function (model, options) {
-    localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
-    options.success(model.toJSON());
+    var _this = this,
+      localId = model.get('localId');
+    localforage.setItem(localId, JSON.stringify(model.toJSON()), function () {
+      _this.setStoreKey(localId);
+      options.success(model.toJSON());
+    });
   },
 
-  readAction: function (model, options) {
-    var store = [];
+  readAction: function (keys, model, options) {
+    var store = [],
+      length = keys.length;
 
-    for (var key in localStorage) {
-      var item = this.getItem(key);
-      if (item.type === 'srcnote') {
-        item.date = new Date(item.date);
-        item.modified = item.modified ? new Date(item.modified) : null;
-        store.push(item);
-      }
+    if (!length) {
+      // store is empty
+      model.reset(store);
+    } else {
+      _.each(keys, function (key, index) {
+        localforage.getItem(key, function (val) {
+          var item = JSON.parse(val);
+          item.date = new Date(item.date);
+          item.modified = new Date(item.modified);
+          store.push(item);
+          if (index + 1 === length) {
+            // last
+            model.reset(store);//, {silent: true});
+          }
+        });
+      }, this);
     }
-    model.set(store, {silent: true});
-    // options.success();
   },
 
-  updateAction: function (model, options) {
-    var item = this.getItem(model.get('id'));
-    if (!item) {
+  updateAction: function (keys, model, options) {
+    if (_.indexOf(keys, model.get('localId')) === -1) {
       return this.createAction(model, options);
     }
-
-    var title = model.get('title');
-    if (item.title !== title) {
-      localStorage.removeItem(item.id);
-    }
-    model.set('id', helpers.hash(title));
-    localStorage.setItem(model.get('id'), JSON.stringify(model.toJSON()));
-
-    options.success(model.toJSON());
+    localforage.setItem(model.get('localId'), JSON.stringify(model.toJSON()), function () {
+      options.success(model.toJSON());
+    });
+    this.setStoreKey(model.get('localId'));
   },
 
   deleteAction: function (model, options) {
     localStorage.removeItem(item.id);
   },
-
-  getItem: function (id) {
-    var item = localStorage.getItem(id);
-    if (item) {
-      return JSON.parse(item);
-    }
-
-    return null;
+  
+  getStoreKeys: function (cb) {
+    localforage.getItem('srcnote-key', function (keys) {
+      if (_.isString(keys)) {
+        keys = JSON.parse(keys);
+      } else {
+        keys = [];
+      }
+      cb(keys);
+    });
+  },
+  setStoreKey: function (newKey) {
+    this.getStoreKeys(function (keys) {
+      var index = _.indexOf(keys, newKey);
+      if (index === -1) {
+        // move key to be last to awoide sorting 
+        // keys.splice(index, 1);
+        keys.push(newKey);
+      }
+      localforage.setItem('srcnote-key', JSON.stringify(keys));
+    });
+  },
+  removeStoreKey: function () {
+    this.getStoreKeys(function (keys) {
+      var index = _.indexOf(keys, newKey);
+      if (index !== -1) {
+        keys.splice(index, 1);
+      }
+      localforage.setItem('srcnote-key', JSON.stringify(keys));
+    });
   }
 };
 
