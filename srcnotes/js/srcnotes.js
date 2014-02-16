@@ -265,16 +265,6 @@ SRCNotes.EditView = Backbone.View.extend({
   }
 });
 
-SRCNotes.ListActionMenuView = Backbone.View.extend({
-  
-  initialize: function () {
-    
-  },
-
-  render: function () {
-    
-  }
-});
 SRCNotes.ListView = Backbone.View.extend({
   el: '#srcnotes',
 
@@ -500,7 +490,7 @@ var notesapp = new SRCNotes.ListView();
 // notesapp.items.fetch();
 // notesapp.render();
 
-localforage.getItem('srcnote-key', function () {
-  console.log(arguments);
-});
+// localforage.getItem('srcnote-key', function () {
+//   console.log(arguments);
+// });
 }).call(this, jQuery, _, Backbone);

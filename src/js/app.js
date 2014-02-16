@@ -3,6 +3,6 @@ var notesapp = new SRCNotes.ListView();
 // notesapp.items.fetch();
 // notesapp.render();
 
-localforage.getItem('srcnote-key', function () {
-  console.log(arguments);
-});
+// localforage.getItem('srcnote-key', function () {
+//   console.log(arguments);
+// });

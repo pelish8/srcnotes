@@ -1,46 +1,51 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <title>SRCNotes</title>
-        <meta charset="UTF-8"> 
-        <link rel="stylesheet" href="srcnotes/css/srcnotes.dep.css" type="text/css" media="screen" title="no title" charset="utf-8">
-        <link rel="stylesheet" href="srcnotes/css/srcnotes.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    </head>
-    <body>
-        <div id="srcnotes"></div>
-        <!-- list view tempalte -->
-        <script type="text/html" charset="utf-8" id="template-list-view-l">
-            <div class="l-note">
-                <form action="#" method="post" class="pure-form js-add-new-item">
-                    <input type="text" class="note-name js-note-name" placeholder="Note name"/>
-                </form>
-                <ul id="notes" tabindex="0"></ul>
-            </div>
-        </script>
-        
-        <!-- edit view temapte -->
-        <script type="text/html" charset="utf-8" id="template-edit-view">
-            <form action="#" method="post" class="pure-form js-edit-form pure-g" tabindex="0">
-                <div class="pure-g action-menu">
-                    <div class="pure-u-5-24">
-                        <a class="js-back pure-button"><i class="fa fa-angle-left"></i></a>
-                    </div>
-                    <div class="pure-u-19-24">
-                        <input type="text" value="{{ title }}" class="note-name">
-                    </div>
-                </div>
-                <div class="note-content">
-                    <textarea placeholder="Note...">{{ content }}</textarea>
-                </div>
-            </form>
-        </script>
-        
-        <!-- note tempate -->
-        <script type="text/html" charset="utf-8" id="tempate-note">
-            <a href="{{ title }}" class="js-open-note">{{ title }}</a>
-        </script>
-        
-        <script type="text/javascript" charset="utf-8" src="srcnotes/js/srcnotes.dep.js"></script>
-        <script type="text/javascript" charset="utf-8" src="srcnotes/js/srcnotes.js"></script>
-    </body>
+  <head>
+    <title>SRCNotes</title>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="srcnotes/css/srcnotes.dep.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="srcnotes/css/srcnotes.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  </head>
+  <body>
+    <div id="srcnotes"></div>
+    <!-- list view tempalte -->
+    <script type="text/html" charset="utf-8" id="template-list-view-l">
+      <div class="l-note">
+        <form action="#" method="post" class="pure-form js-add-new-item">
+          <input type="text" class="note-name js-note-name" placeholder="Note name"/>
+        </form>
+        <ul id="notes" tabindex="0"></ul>
+      </div>
+    </script>
+
+    <!-- edit view temapte -->
+    <script type="text/html" charset="utf-8" id="template-edit-view">
+      <form action="#" method="post" class="pure-form js-edit-form pure-g" tabindex="0">
+        <div class="pure-g top-edit-menu">
+          <div class="pure-u-5-24">
+            <a class="js-back pure-button"><i class="fa fa-angle-left"></i></a>
+          </div>
+          <div class="pure-u-19-24">
+            <input type="text" value="{{ title }}" class="note-name">
+          </div>
+        </div>
+        <div class="note-content">
+          <textarea placeholder="Note...">{{ content }}</textarea>
+        </div>
+      </form>
+    </script>
+
+    <!-- note tempate -->
+    <script type="text/html" charset="utf-8" id="tempate-note">
+      <a href="{{ title }}" class="js-open-note">{{ title }}</a>
+    </script>
+
+    <!-- action template -->
+    <script type="text/html" charset="utf-8" id="tempate-list-action-menu">
+      
+    </script>
+    
+    <script type="text/javascript" charset="utf-8" src="srcnotes/js/srcnotes.dep.js"></script>
+    <script type="text/javascript" charset="utf-8" src="srcnotes/js/srcnotes.js"></script>
+  </body>
 </html>
