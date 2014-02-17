@@ -30,17 +30,28 @@ SRCNotes.EditView = Backbone.View.extend({
   onBeforeunLoad: function () {
     this.model.save({
       title: this.$el.find('input').val(),
-      content: this.$el.find('textarea').val()
+      content: this.editor.getValue()
     });
+    // return 'It looks like you have been editing something -- if you leave before submitting your changes will be lost.';
   },
 
-  render: function () {
-    $(this.el).append(template('template-edit-view', {
+  render: function (item) {
+    if (item) {
+      this.model = item;
+    }
+    $(this.el).html(template('template-edit-view', {
       title: this.model.escape('title'),
       content: this.model.escape('content')
     }));
     this.$parent.append(this.el);
     this.$el.find('textarea').focus();
+
+    this.editor = CodeMirror.fromTextArea(this.$el.find('#text-editor').get(0), {
+      lineNumbers: false,
+      lineWrapping: true,
+      mode: 'markdown'
+    });
+  
   },
     
   saveContent: function (ev) {
@@ -49,7 +60,7 @@ SRCNotes.EditView = Backbone.View.extend({
 
     this.model.save({
       title: $target.find('input').val(),
-      content: $target.find('textarea').val()
+      content: this.editor.getValue()
     });
   },
 

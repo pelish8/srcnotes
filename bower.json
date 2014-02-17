@@ -21,6 +21,7 @@
     "pure": "~0.4.1",
     "font-awesome": "~4.0.3",
     "jQuery.scrollToElement": "https://gist.github.com/9023893.git",
-    "localforage": "*"
+    "localforage": "*",
+    "codemirror": "~3.21.0"
   }
 }

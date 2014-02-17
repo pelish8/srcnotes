@@ -54,7 +54,10 @@ module.exports = function (grunt) {
           './components/jQuery.scrollToElement/jquery.scrollToElement.js',
           './components/localforage/dist/localforage.js',
           './components/underscore/underscore.js',
-          './components/backbone/backbone.js'
+          './components/backbone/backbone.js',
+          './components/codemirror/lib/codemirror.js',
+          './components/codemirror/mode/xml/xml.js',
+          './components/codemirror/mode/markdown/markdown.js'
         ],
         dest: './srcnotes/js/srcnotes.dep.js'
       },
@@ -63,7 +66,8 @@ module.exports = function (grunt) {
           './components/pure/base.css',
           './components/pure/forms.css',
           './components/pure/grids.css',
-          './components/pure/buttons.css'
+          './components/pure/buttons.css',
+          './components/codemirror/lib/codemirror.css'
         ],
         dest: './srcnotes/css/srcnotes.dep.css'
       }

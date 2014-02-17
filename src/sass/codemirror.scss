@@ -1,0 +1,74 @@
+$codemirror-base: rgb(180, 180, 180);
+$codemirror-white: #fff;
+$codemirror-selected: lighten($input-fucus-color, 10%);
+
+.CodeMirror {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  font-family: Inconsolata, monospace;
+  color: $codemirror-base;
+  background: $background-color;
+  box-shadow: none;
+  resize: none;
+  border-top: solid 0.1em $border-color;
+  font-size: 1em;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1.3em;
+  
+  .cm-header {
+  //  font-family: arial;
+    color: $font-color;
+  }
+  
+  div.CodeMirror-cursor {
+    border-left: 0.15em solid $cursor-color;
+  }
+  .CodeMirror-selected {
+    background: $codemirror-selected;
+  }
+  
+  &.CodeMirror-focused {
+    background: $input-fucus-color;
+  }
+  
+  .cm-header1 {
+    font-size: 140%;
+    color: $font-color;
+  }
+  .cm-header2 {
+    font-size: 130%;
+  }
+  .cm-header3 {
+    font-size: 120%;
+  }
+  .cm-header4 {
+    font-size: 110%;
+  }
+  .cm-header5 {
+    font-size: 100%;
+  }
+  .cm-header6 {
+    font-size: 90%;
+  }
+  .cm-strong {
+    font-weight: bold;
+  }
+
+  .cm-strong, .cm-comment, .cm-link, .cm-variable-2, .cm-variable-3 {
+    color: $codemirror-white;
+  }
+  
+  .cm-tag, .cm-attribute {
+    color: $codemirror-base;
+  }
+  
+  .cm-string {
+    color: $font-color;
+  }
+  
+}
+

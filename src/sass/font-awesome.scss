@@ -11,6 +11,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('../../fonts/Inconsolata.otf') format('opentype'); // used when developing fonts
+  font-weight: normal;
+  font-style: normal;
+}
+
 .#{$fa-css-prefix} {
   display: inline-block;
   font-family: FontAwesome;
