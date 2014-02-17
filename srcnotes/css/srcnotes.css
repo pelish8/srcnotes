@@ -82,16 +82,21 @@
     outline: none; }
   #notes li.list-items {
     list-style-type: none;
-    border-bottom: solid 1px #32312f; }
+    border-bottom: solid 1px #32312f;
+    width: 100%;
+    overflow: hidden; }
     #notes li.list-items.focus {
       background: #434240; }
-  #notes .list-items a {
-    text-decoration: none;
-    color: #e0dfdc;
-    padding: 1em;
-    display: block; }
-    #notes .list-items a:hover {
-      background: #434240; }
+    #notes li.list-items a {
+      text-decoration: none;
+      color: #e0dfdc;
+      padding: 1em;
+      display: block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap; }
+      #notes li.list-items a:hover {
+        background: #434240; }
 
 .edit-form {
   height: 100%;

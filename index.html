@@ -12,7 +12,7 @@
     <script type="text/html" charset="utf-8" id="template-list-view-l">
       <div class="l-note">
         <form action="#" method="post" class="pure-form js-add-new-item">
-          <input type="text" class="note-name js-note-name" placeholder="Note name"/>
+          <input type="text" class="note-name js-note-name" placeholder="Name"/>
         </form>
         <ul id="notes" tabindex="0"></ul>
       </div>
@@ -37,7 +37,7 @@
 
     <!-- note tempate -->
     <script type="text/html" charset="utf-8" id="tempate-note">
-      <a href="{{ title }}" class="js-open-note">{{ title }}</a>
+      <a href="{{ title }}" class="js-open-note" title="{{ title }}">{{ title }}</a>
     </script>
 
     <!-- action template -->

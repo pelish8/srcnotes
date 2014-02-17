@@ -35,22 +35,29 @@
   li.list-items {
     list-style-type: none;
     border-bottom: solid 1px $border-color;
+    width: 100%;
+    overflow: hidden;
         
     &.focus {
       background: $hover-color;
     }
-  }
     
-  .list-items a {
-    text-decoration: none;
-    color: $font-color;
-    padding: 1em;
-    display: block;
-        
-    &:hover {
-      background: $hover-color;
+    a {
+      text-decoration: none;
+      color: $font-color;
+      padding: 1em;
+      display: block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+
+      
+      &:hover {
+        background: $hover-color;
+      }
     }
   }
+    
     
   padding: 0;
   margin: 0;
