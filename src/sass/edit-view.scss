@@ -1,9 +1,10 @@
 .edit-form {
   height: 100%;
   display: block;
+  position: absolute;
+  width: 100%;
   .top-edit-menu {
     width: 100%;
-//    position: absolute;
   }
 
   .pure-button {
@@ -26,11 +27,11 @@
   .note-content {
     position: absolute;
     left: 0px;
-    top: 3.2em;
+    top: 3.1em;
     right: 0px;
     overflow: auto;
     bottom: 0;
-    border-top: solid 0.3em $border-color;
+    border-top: solid 0.35em $border-color;
     letter-spacing: 0;
 
     textarea {

@@ -40,7 +40,8 @@ SRCNotes.sync = {
 
   readAction: function (keys, model, options) {
     var store = [],
-      length = keys.length;
+      length = keys.length,
+      _this = this;
 
     if (!length) {
       // store is empty
@@ -48,6 +49,11 @@ SRCNotes.sync = {
     } else {
       _.each(keys, function (key, index) {
         localforage.getItem(key, function (val) {
+          // if key value does not exist remove key
+          if (!val) {
+            _this.removeStoreKey(key);
+            return;
+          }
           var item = JSON.parse(val);
           item.date = new Date(item.date);
           item.modified = new Date(item.modified);
@@ -72,7 +78,12 @@ SRCNotes.sync = {
   },
 
   deleteAction: function (model, options) {
-    localStorage.removeItem(item.id);
+    var _this = this,
+      key = model.get('localId');
+    localforage.removeItem(key, function () {
+      _this.removeStoreKey(key);
+      options.success(model);
+    });
   },
   
   getStoreKeys: function (cb) {
@@ -96,9 +107,9 @@ SRCNotes.sync = {
       localforage.setItem('srcnote-key', JSON.stringify(keys));
     });
   },
-  removeStoreKey: function () {
+  removeStoreKey: function (key) {
     this.getStoreKeys(function (keys) {
-      var index = _.indexOf(keys, newKey);
+      var index = _.indexOf(keys, key);
       if (index !== -1) {
         keys.splice(index, 1);
       }

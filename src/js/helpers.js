@@ -45,6 +45,9 @@ var helpers = {
     }
     
     localforage.setItem('srcnote-key', JSON.stringify(keyss));
+  },
+  escapeRegExp: function (text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   }
 };
 

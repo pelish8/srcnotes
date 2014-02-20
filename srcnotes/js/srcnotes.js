@@ -48,6 +48,9 @@ var helpers = {
     }
     
     localforage.setItem('srcnote-key', JSON.stringify(keyss));
+  },
+  escapeRegExp: function (text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   }
 };
 
@@ -99,7 +102,8 @@ SRCNotes.sync = {
 
   readAction: function (keys, model, options) {
     var store = [],
-      length = keys.length;
+      length = keys.length,
+      _this = this;
 
     if (!length) {
       // store is empty
@@ -107,6 +111,11 @@ SRCNotes.sync = {
     } else {
       _.each(keys, function (key, index) {
         localforage.getItem(key, function (val) {
+          // if key value does not exist remove key
+          if (!val) {
+            _this.removeStoreKey(key);
+            return;
+          }
           var item = JSON.parse(val);
           item.date = new Date(item.date);
           item.modified = new Date(item.modified);
@@ -131,7 +140,12 @@ SRCNotes.sync = {
   },
 
   deleteAction: function (model, options) {
-    localStorage.removeItem(item.id);
+    var _this = this,
+      key = model.get('localId');
+    localforage.removeItem(key, function () {
+      _this.removeStoreKey(key);
+      options.success(model);
+    });
   },
   
   getStoreKeys: function (cb) {
@@ -155,9 +169,9 @@ SRCNotes.sync = {
       localforage.setItem('srcnote-key', JSON.stringify(keys));
     });
   },
-  removeStoreKey: function () {
+  removeStoreKey: function (key) {
     this.getStoreKeys(function (keys) {
-      var index = _.indexOf(keys, newKey);
+      var index = _.indexOf(keys, key);
       if (index !== -1) {
         keys.splice(index, 1);
       }
@@ -283,7 +297,8 @@ SRCNotes.ListView = Backbone.View.extend({
     'keydown input.js-note-name': 'findItem',
     'keyup input.js-note-name': 'filterNotes',
     'submit form.js-add-new-item': 'addItem',
-    'keydown #notes': 'moveCursor'
+    'keydown #notes': 'moveCursor',
+    'focus input.js-note-name': 'noteNateFocus'
   },
 
   templates: {},
@@ -291,14 +306,15 @@ SRCNotes.ListView = Backbone.View.extend({
   initialize: function () {
     _.bindAll(this, 'render', 'addItem',
               'moveFocus', 'clearSearch',
-              'moveCursor', 'filterNotes');
+              'moveCursor', 'filterNotes',
+              'noteNateFocus');
 
     this.items = new SRCNotes.Notes();
     this.items.fetch();
     this.items.on('add', function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
-        '$parent': this.$el
+        'listView': this
       });
       this.$notes.prepend(tpl.render().el);
       // save template for later
@@ -330,7 +346,7 @@ SRCNotes.ListView = Backbone.View.extend({
     this.items.each(function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
-        '$parent': this.$el
+        'listView': this
       });
       // save template for later
       this.templates[model.id] = tpl;
@@ -354,8 +370,8 @@ SRCNotes.ListView = Backbone.View.extend({
 
   // @todo waite for user to stop writing name
   filterNotes: function () {
-    var name = this.$el.find('.js-note-name').val(),
-    pattern = new RegExp('^' + name);//, 'i'); case insensitive
+    var name = helpers.escapeRegExp(this.$el.find('.js-note-name').val()),
+      pattern = new RegExp('^' + name);//, 'i'); case insensitive
 
     this.items.each(function (model) {
       if (!pattern.test(model.get('title'))) {
@@ -411,23 +427,25 @@ SRCNotes.ListView = Backbone.View.extend({
 
   moveCursor: function (ev) {
     // console.log(ev.target);
-    ev.preventDefault();
     switch (ev.keyCode) {
     case 40:
       this.moveDown(ev);
+      ev.preventDefault();
       break;
     case 38:
       this.moveUp(ev);
+      ev.preventDefault();
       break;
     case 13:
       // open note when enter key is pressed
       this.openNote(ev);
+      ev.preventDefault();
       break;
     }
   },
 
   moveDown: function () {
-    if (this.index < (this.$visibleNotes.size() - 1)) {
+    if (this.$visibleNotes && (this.index < (this.$visibleNotes.size() - 1))) {
       this.index++;
       this.$visibleNotes.eq(this.index - 1).removeClass('focus');
       this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
@@ -436,6 +454,9 @@ SRCNotes.ListView = Backbone.View.extend({
   },
 
   moveUp: function () {
+    if (!this.$visibleNotes) {
+      return;
+    }
     if (this.index > 0) {
       this.index--;
       this.$visibleNotes.eq(this.index).addClass('focus');
@@ -452,22 +473,46 @@ SRCNotes.ListView = Backbone.View.extend({
   openNote: function () {
     this.$visibleNotes.eq(this.index).find('a').trigger('click');
     this.$visibleNotes.eq(this.index).removeClass('focus');
+  },
+  
+  noteNateFocus: function () {
+    this.removeActiveNote();
+  },
+  
+  // note where option is visible
+  setActiveNote: function (note) {
+    this.actioveNote = note;
+  },
+  
+  removeActiveNote: function () {
+    if (this.actioveNote) {
+      this.actioveNote.hideOption();
+      this.actioveNote = null;
+    }
+    if (this.$visibleNotes && this.index) {
+      this.$visibleNotes.eq(this.index).removeClass('focus');
+    }
   }
 });
 
 SRCNotes.NoteView = Backbone.View.extend({
   tagName: 'li',
-  className: 'list-items js-list-item',
+  className: 'list-item js-list-item',
   events: {
-    'click a': 'openNote'
+    'click a.js-open-link': 'openNote',
+    'click a.js-option-open': 'toggleOptionPanel',
+    'click a.js-option-close': 'hideOption',
+    'click a.js-options-delete': 'removeItem'
   },
 
   initialize: function (cfg) {
-    _.bindAll(this, 'render', 'openNote');
-    this.$parent = cfg.$parent;
+    _.bindAll(this, 'render', 'openNote', 'toggleOptionPanel', 'hideOption', 'removeItem');
+    this.listView = cfg.listView;
 
-    this.model.on('remove', function () {
-      this.$el.remove();
+    this.model.on('destroy', function () {
+      this.$el.slideUp(400, function () {
+        this.remove();
+      });
     }, this);
 
     this.model.on('show', function () {
@@ -488,15 +533,38 @@ SRCNotes.NoteView = Backbone.View.extend({
 
   openNote: function (ev) {
     ev.preventDefault();
-    this.$parent.find('.l-note').addClass('edit-form-active');
+    this.listView.$el.find('.l-note').addClass('edit-form-active');
     this.editForm = new SRCNotes.EditView({
       model: this.model,
-      '$parent': this.$parent
+      '$parent': this.listView.$el
     });
+  },
+  
+  toggleOptionPanel: function (ev) {
+    ev.preventDefault();
+    
+    this.listView.removeActiveNote();
+    
+    this.$el.find('.js-link-panel').toggle();
+    this.$el.find('.js-options-panel').toggle();
+    
+    this.listView.setActiveNote(this);
+  },
+  
+  hideOption: function () {
+    var $option = this.$el.find('.js-options-panel');
+    if ($option.is(':visible')) {
+      this.$el.find('.js-link-panel').toggle();
+      $option.toggle();
+    }
+  },
+  
+  removeItem: function () {
+    this.model.destroy();
   }
 });
 
-var notesapp = new SRCNotes.ListView();
+SRCNotes.notesapp = new SRCNotes.ListView();
 // new SRCNotes.Notes();
 // notesapp.items.fetch();
 // notesapp.render();

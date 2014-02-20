@@ -23,6 +23,15 @@
 .fa-angle-left:before {
   content: "\f104"; }
 
+.fa-times:before {
+  content: "\f00d"; }
+
+.fa-ellipsis-h:before {
+  content: "\f141"; }
+
+.fa-trash-o:before {
+  content: "\f014"; }
+
 .pure-form input.note-name {
   font-size: 1.5em; }
 
@@ -74,33 +83,96 @@
     color: #e0dfdc; }
 
 #notes {
-  background: #3a3a37;
+  background: #32312f;
   border-top: solid 0.32em #32312f;
   padding: 0;
   margin: 0; }
   #notes:focus {
     outline: none; }
-  #notes li.list-items {
+  #notes li.list-item {
     list-style-type: none;
-    border-bottom: solid 1px #32312f;
     width: 100%;
-    overflow: hidden; }
-    #notes li.list-items.focus {
+    overflow: hidden;
+    position: relative;
+    background: #3a3a37; }
+    #notes li.list-item.focus {
       background: #434240; }
-    #notes li.list-items a {
-      text-decoration: none;
-      color: #e0dfdc;
+
+.link-panel {
+  border-top: solid 1px #32312f; }
+  .link-panel a {
+    text-decoration: none;
+    color: #e0dfdc;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; }
+  .link-panel .l-open-link {
+    display: inline-block;
+    width: 94%; }
+    .link-panel .l-open-link a {
       padding: 1em;
+      display: block; }
+  .link-panel:hover {
+    background: #434240; }
+  .link-panel .l-info-link {
+    font-size: 1em;
+    width: 1em;
+    z-index: 99;
+    position: absolute;
+    right: 0;
+    display: inline-block; }
+  .link-panel a.info-link {
+    padding: 1.2em 1.4em 1.2em 0.9em;
+    width: 100%;
+    float: right;
+    font-size: 1em;
+    cursor: pointer; }
+    .link-panel a.info-link i {
+      margin: 0 45%; }
+    .link-panel a.info-link:hover {
+      background: #3a3a37; }
+
+.options-panel {
+  border-top: solid 1px #32312f;
+  display: none;
+  background: #32312f; }
+  .options-panel a {
+    text-decoration: none;
+    color: #e0dfdc;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; }
+  .options-panel .l-options-actions {
+    display: inline-block;
+    width: 94%; }
+    .options-panel .l-options-actions a {
+      padding: 0.53em;
       display: block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap; }
-      #notes li.list-items a:hover {
-        background: #434240; }
+      font-size: 1.5em;
+      text-align: center; }
+  .options-panel .l-options-close {
+    font-size: 1em;
+    width: 1em;
+    z-index: 99;
+    position: absolute;
+    right: 0;
+    display: inline-block; }
+  .options-panel a.option-close {
+    padding: 1.2em 1.4em 1.2em 0.9em;
+    width: 100%;
+    float: right;
+    font-size: 1em;
+    cursor: pointer; }
+    .options-panel a.option-close i {
+      margin: 0 45%; }
 
 .edit-form {
   height: 100%;
-  display: block; }
+  display: block;
+  position: absolute;
+  width: 100%; }
   .edit-form .top-edit-menu {
     width: 100%; }
   .edit-form .pure-button {
@@ -118,11 +190,11 @@
   .edit-form .note-content {
     position: absolute;
     left: 0px;
-    top: 3.2em;
+    top: 3.1em;
     right: 0px;
     overflow: auto;
     bottom: 0;
-    border-top: solid 0.3em #32312f;
+    border-top: solid 0.35em #32312f;
     letter-spacing: 0; }
     .edit-form .note-content textarea {
       font-size: 1em;

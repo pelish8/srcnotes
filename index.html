@@ -37,7 +37,28 @@
 
     <!-- note tempate -->
     <script type="text/html" charset="utf-8" id="tempate-note">
-      <a href="{{ title }}" class="js-open-note" title="{{ title }}">{{ title }}</a>
+    <div class="link-panel js-link-panel">
+      <div class="l-open-link">
+        <a href="#" class="js-open-link" title="{{ title }}">{{ title }}</a>
+      </div>
+      <div class="l-info-link">
+        <a href="#" class="js-option-open info-link"><i class="fa fa-ellipsis-h"></i></a>
+      </div>
+    </div>
+    
+    <div class="options-panel js-options-panel">
+      <div class="l-options-actions">
+        <div class="pure-g">
+          <div class="pure-u-3-8">
+            <a href="#" class="js-options-delete" title="{{ title }}"><i class="fa fa-trash-o"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="l-options-close">
+        <a href="#" class="js-option-close option-close"><i class="fa fa-times"></i></a>
+      </div>
+    </div>
+    
     </script>
 
     <!-- action template -->

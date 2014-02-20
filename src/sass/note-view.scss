@@ -1,0 +1,108 @@
+#notes {
+  background: $border-color;
+  border-top: solid 0.32em $border-color;
+  padding: 0;
+  margin: 0;
+  
+  &:focus {
+    outline: none;
+  }
+  
+  li.list-item {
+    list-style-type: none;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background: $background-color;
+        
+    &.focus {
+      background: $hover-color;
+    }
+  }
+}
+
+.link-panel {
+  border-top: solid 1px $border-color;
+  a {
+    text-decoration: none;
+    color: $font-color;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .l-open-link {
+    display: inline-block;
+    width: 94%;
+    a {
+      padding: 1em;
+      display: block;
+    }
+  }
+  &:hover {
+    background: $hover-color;
+  }
+  .l-info-link {
+    font-size: 1em;
+    width: 1em;
+    z-index:99;
+    position: absolute;
+    right: 0;
+    display: inline-block;
+  }
+  a.info-link {
+    padding: 1.2em 1.4em 1.2em 0.9em;
+    width: 100%;
+    float: right;
+    font-size: 1em;
+    cursor: pointer;
+    i {
+      margin: 0 45%;
+    }
+    &:hover {
+      background: $background-color;
+    }
+  }
+}
+
+.options-panel {
+  border-top: solid 1px $border-color;
+  display: none;
+  background: $background-color-options-panel;
+  a {
+    text-decoration: none;
+    color: $font-color;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .l-options-actions {
+    display: inline-block;
+    width: 94%;
+    a {
+      padding: 0.53em;
+      display: block;
+      font-size: 1.5em;
+      text-align: center;
+    }
+  }
+  .l-options-close {
+    font-size: 1em;
+    width: 1em;
+    z-index:99;
+    position: absolute;
+    right: 0;
+    display: inline-block;
+  }
+  a.option-close {
+    padding: 1.2em 1.4em 1.2em 0.9em;
+    width: 100%;
+    float: right;
+    font-size: 1em;
+    cursor: pointer;
+    i {
+      margin: 0 45%;
+    }
+  }
+}

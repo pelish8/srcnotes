@@ -5,7 +5,8 @@ SRCNotes.ListView = Backbone.View.extend({
     'keydown input.js-note-name': 'findItem',
     'keyup input.js-note-name': 'filterNotes',
     'submit form.js-add-new-item': 'addItem',
-    'keydown #notes': 'moveCursor'
+    'keydown #notes': 'moveCursor',
+    'focus input.js-note-name': 'noteNateFocus'
   },
 
   templates: {},
@@ -13,14 +14,15 @@ SRCNotes.ListView = Backbone.View.extend({
   initialize: function () {
     _.bindAll(this, 'render', 'addItem',
               'moveFocus', 'clearSearch',
-              'moveCursor', 'filterNotes');
+              'moveCursor', 'filterNotes',
+              'noteNateFocus');
 
     this.items = new SRCNotes.Notes();
     this.items.fetch();
     this.items.on('add', function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
-        '$parent': this.$el
+        'listView': this
       });
       this.$notes.prepend(tpl.render().el);
       // save template for later
@@ -52,7 +54,7 @@ SRCNotes.ListView = Backbone.View.extend({
     this.items.each(function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
-        '$parent': this.$el
+        'listView': this
       });
       // save template for later
       this.templates[model.id] = tpl;
@@ -76,8 +78,8 @@ SRCNotes.ListView = Backbone.View.extend({
 
   // @todo waite for user to stop writing name
   filterNotes: function () {
-    var name = this.$el.find('.js-note-name').val(),
-    pattern = new RegExp('^' + name);//, 'i'); case insensitive
+    var name = helpers.escapeRegExp(this.$el.find('.js-note-name').val()),
+      pattern = new RegExp('^' + name);//, 'i'); case insensitive
 
     this.items.each(function (model) {
       if (!pattern.test(model.get('title'))) {
@@ -133,23 +135,25 @@ SRCNotes.ListView = Backbone.View.extend({
 
   moveCursor: function (ev) {
     // console.log(ev.target);
-    ev.preventDefault();
     switch (ev.keyCode) {
     case 40:
       this.moveDown(ev);
+      ev.preventDefault();
       break;
     case 38:
       this.moveUp(ev);
+      ev.preventDefault();
       break;
     case 13:
       // open note when enter key is pressed
       this.openNote(ev);
+      ev.preventDefault();
       break;
     }
   },
 
   moveDown: function () {
-    if (this.index < (this.$visibleNotes.size() - 1)) {
+    if (this.$visibleNotes && (this.index < (this.$visibleNotes.size() - 1))) {
       this.index++;
       this.$visibleNotes.eq(this.index - 1).removeClass('focus');
       this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
@@ -158,6 +162,9 @@ SRCNotes.ListView = Backbone.View.extend({
   },
 
   moveUp: function () {
+    if (!this.$visibleNotes) {
+      return;
+    }
     if (this.index > 0) {
       this.index--;
       this.$visibleNotes.eq(this.index).addClass('focus');
@@ -174,5 +181,24 @@ SRCNotes.ListView = Backbone.View.extend({
   openNote: function () {
     this.$visibleNotes.eq(this.index).find('a').trigger('click');
     this.$visibleNotes.eq(this.index).removeClass('focus');
+  },
+  
+  noteNateFocus: function () {
+    this.removeActiveNote();
+  },
+  
+  // note where option is visible
+  setActiveNote: function (note) {
+    this.actioveNote = note;
+  },
+  
+  removeActiveNote: function () {
+    if (this.actioveNote) {
+      this.actioveNote.hideOption();
+      this.actioveNote = null;
+    }
+    if (this.$visibleNotes && this.index) {
+      this.$visibleNotes.eq(this.index).removeClass('focus');
+    }
   }
 });
