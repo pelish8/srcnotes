@@ -5,11 +5,11 @@ SRCNotes.EditView = Backbone.View.extend({
   events: {
     'submit form.js-edit-form': 'saveContent',
     'click a.js-back': 'showList',
-    'keyup': 'closeEditView'
+    'keyup': 'keyUp'
   },
     
   initialize: function (cfg) {
-    _.bindAll(this, 'saveContent', 'render', 'closeEditView', 'onBeforeunLoad');
+    _.bindAll(this, 'saveContent', 'render', 'keyUp', 'onBeforeunLoad');
     this.$parent = cfg.$parent;
 
     this.render();
@@ -66,18 +66,21 @@ SRCNotes.EditView = Backbone.View.extend({
 
   showList: function (ev) {
     ev.preventDefault();
-    this.$el.find('textarea').blur();
-    this.$el.find('.note-name').blur();
-    this.$parent.find('.l-note').removeClass('edit-form-active');
-    this.$parent.find('.js-note-name').focus().trigger('keyup');
     this.$el.find('.js-edit-form').submit();
-    this.$parent.trigger('clearSearch');
-    this.remove();
+    Router.navigate('', { trigger: true });
+    this.hide();
   },
   
-  closeEditView: function (ev) {
+  keyUp: function (ev) {
     if (ev.keyCode === 27) {
       this.showList(ev);
     }
+  },
+  hide: function () {
+    this.$el.hide();
+    // this.remove();
+  },
+  show: function () {
+    this.$el.show();
   }
 });

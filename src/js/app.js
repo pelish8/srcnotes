@@ -1,4 +1,5 @@
-SRCNotes.notesapp = new SRCNotes.ListView();
+// var app = new SRCNotes.ListView();
+// Backbone.history.start();
 // new SRCNotes.Notes();
 // notesapp.items.fetch();
 // notesapp.render();
@@ -6,3 +7,5 @@ SRCNotes.notesapp = new SRCNotes.ListView();
 // localforage.getItem('srcnote-key', function () {
 //   console.log(arguments);
 // });
+
+Router = new SRCNotes.Router();

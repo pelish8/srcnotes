@@ -11,14 +11,21 @@ SRCNotes.ListView = Backbone.View.extend({
 
   templates: {},
 
-  initialize: function () {
+  initialize: function (cfg) {
     _.bindAll(this, 'render', 'addItem',
               'moveFocus', 'clearSearch',
               'moveCursor', 'filterNotes',
               'noteNateFocus');
-
-    this.items = new SRCNotes.Notes();
-    this.items.fetch();
+    
+    // Router = new SRCNotes.Router({
+    //   listView: this
+    // });
+    this.items = cfg.items;
+    if (!this.items.fetched) {
+      this.items.fetch();
+    } else {
+      this.render();
+    }
     this.items.on('add', function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
@@ -38,12 +45,9 @@ SRCNotes.ListView = Backbone.View.extend({
       }
     }, this);
     
-    this.items.on('reset', function () {
+    this.items.once('reset', function () {
       this.render();
     }, this);
-    
-    // this.items.fetch();
-    this.$el.on('clearSearch', this.clearSearch);
   },
 
   render: function () {
@@ -60,6 +64,9 @@ SRCNotes.ListView = Backbone.View.extend({
       this.templates[model.id] = tpl;
       this.$notes.prepend(tpl.render().el);
     }, this);
+    if (this.items.fetched) {
+      this.show();
+    }
     $app.find('.js-note-name').focus();
   },
 
@@ -96,14 +103,8 @@ SRCNotes.ListView = Backbone.View.extend({
     item = this.items.get(helpers.hash(title));
     if (!item) {
       item = this.items.create({title: title});
-      // item.save();
     }
-    this.$el.find('.l-note').addClass('edit-form-active');
-    this.editForm = new SRCNotes.EditView({
-      model: item,
-      '$parent': this.$el,
-      'show': true
-    });
+    Router.navigate('note/' + item.get('id'), { trigger: true });
   },
 
   moveFocus: function (position) {
@@ -200,5 +201,15 @@ SRCNotes.ListView = Backbone.View.extend({
     if (this.$visibleNotes && this.index) {
       this.$visibleNotes.eq(this.index).removeClass('focus');
     }
+  },
+  show: function (reset) {
+    this.$el.find('.l-note').show();
+    if (reset) {
+      this.clearSearch();
+      this.$el.find('.js-note-name').focus().trigger('keyup');
+    }
+  },
+  hide: function () {
+    this.$el.find('.l-note').hide();
   }
 });

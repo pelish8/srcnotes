@@ -40,11 +40,12 @@ module.exports = function (grunt) {
           './src/js/Models/*',
           './src/js/Collections/*',
           './src/js/Views/*',
+          './src/js/router.js',
           './src/js/app.js'
         ],
         dest: './srcnotes/js/srcnotes.js',
         options: {
-          banner: '; (function ($, _, Backbone) {\n var SRCNotes = {};\n\n',
+          banner: '; (function ($, _, Backbone) {\n var SRCNotes = {}, Router = {};\n\n',
           footer: '\n}).call(this, jQuery, _, Backbone);\n'
         }
       },

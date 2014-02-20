@@ -63,6 +63,9 @@
   #srcnotes button {
     border: 0; }
 
+.l-note {
+  display: none; }
+
 .pure-form input.note-name {
   border-width: 0 0 0.2em 0;
   border-radius: 0;

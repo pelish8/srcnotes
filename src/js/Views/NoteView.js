@@ -36,11 +36,7 @@ SRCNotes.NoteView = Backbone.View.extend({
 
   openNote: function (ev) {
     ev.preventDefault();
-    this.listView.$el.find('.l-note').addClass('edit-form-active');
-    this.editForm = new SRCNotes.EditView({
-      model: this.model,
-      '$parent': this.listView.$el
-    });
+    Router.navigate('note/' + this.model.get('id'), { trigger: true });
   },
   
   toggleOptionPanel: function (ev) {
