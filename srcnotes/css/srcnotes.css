@@ -32,6 +32,12 @@
 .fa-trash-o:before {
   content: "\f014"; }
 
+.fa-square:before {
+  content: "\f0c8"; }
+
+.fa-archive:before {
+  content: "\f187"; }
+
 .pure-form input.note-name {
   font-size: 1.5em; }
 
@@ -62,6 +68,18 @@
       background: #42423f; }
   #srcnotes button {
     border: 0; }
+  #srcnotes a {
+    color: #e0dfdc; }
+  #srcnotes .color-default a, #srcnotes a.color-default {
+    color: #e0dfdc; }
+  #srcnotes .color-red a, #srcnotes a.color-red {
+    color: #f2777a; }
+  #srcnotes .color-yellow a, #srcnotes a.color-yellow {
+    color: #ffcc66; }
+  #srcnotes .color-green a, #srcnotes a.color-green {
+    color: #99cc99; }
+  #srcnotes .color-blue a, #srcnotes a.color-blue {
+    color: #6699cc; }
 
 .l-note {
   display: none; }
@@ -105,7 +123,6 @@
   border-top: solid 1px #32312f; }
   .link-panel a {
     text-decoration: none;
-    color: #e0dfdc;
     display: block;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -139,10 +156,10 @@
 .options-panel {
   border-top: solid 1px #32312f;
   display: none;
-  background: #32312f; }
+  background: #32312f;
+  margin-right: -100%; }
   .options-panel a {
     text-decoration: none;
-    color: #e0dfdc;
     display: block;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -261,3 +278,31 @@
     color: #b4b4b4; }
   .CodeMirror .cm-string {
     color: #e0dfdc; }
+
+.colors-panel {
+  position: absolute;
+  top: -100%;
+  z-index: 999;
+  outline: 0;
+  -webkit-transform: scale(0);
+  transform: scale(0); }
+  .colors-panel ul {
+    padding: 0;
+    margin: 0;
+    box-shadow: 1px 0px 20px 1px #2C2B2B;
+    background: #3a3a37;
+    border-radius: 0.2em;
+    border-color: #32312f; }
+    .colors-panel ul li {
+      display: inline-block;
+      margin: 1em; }
+      .colors-panel ul li a {
+        font-size: 1.5em;
+        border: solid 0.2333em #3a3a37;
+        border-radius: 0.2em; }
+      .colors-panel ul li a.is-active {
+        background: #32312f;
+        border-color: #32312f; }
+      .colors-panel ul li a:hover {
+        background: #434240;
+        border-color: #434240; }

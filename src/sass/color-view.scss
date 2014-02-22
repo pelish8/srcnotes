@@ -1,0 +1,37 @@
+.colors-panel {
+  position: absolute;
+  top: -100%;
+  z-index: 999;
+  outline: 0;
+  -webkit-transform:scale(0);
+  transform:scale(0);
+  
+  ul {
+    padding: 0;
+    margin: 0;
+    box-shadow: 1px 0px 20px 1px #2C2B2B;
+    background: $background-color;
+    border-radius: 0.2em;
+    border-color: $border-color;
+    
+    li {
+      display: inline-block;
+      margin: 1em;
+      
+      a {
+        font-size: 1.5em;
+        border: solid 0.2333em $background-color;
+        border-radius: 0.2em;
+      }
+      a.is-active {
+        background: $border-color;
+        border-color: $border-color;
+      }
+      
+      a:hover {
+        background: $hover-color;
+        border-color: $hover-color;
+      }
+    }
+  }
+}

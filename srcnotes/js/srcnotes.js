@@ -51,6 +51,10 @@ var helpers = {
   },
   escapeRegExp: function (text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  },
+  
+  isTouch: function () {
+    return 'ontouchstart' in window || 'onmsgesturechange' in window;
   }
 };
 
@@ -185,7 +189,8 @@ Backbone.sync = function (method, model, options) {
 };
 SRCNotes.Note = Backbone.Model.extend({
   defaults: {
-    type: 'srcnote'
+    type: 'srcnote',
+    color: 'default'
   },
   initialize: function (atributes, options) {
     atributes.date = atributes.date || new Date();
@@ -214,6 +219,70 @@ SRCNotes.Notes = Backbone.Collection.extend({
   }
 });
 
+SRCNotes.ColorView = Backbone.View.extend({
+  tagName: 'div',
+  className: 'colors-panel',
+  events: {
+    'focusout': 'focusOut',
+    'click a': 'changeColor'
+  },
+  attributes: {
+    'tabindex': 0
+  },
+  initialize: function (cfg) {
+    _.bindAll(this, 'render', 'focusOut', 'changeColor');
+    
+    this.$main = $('#srcnotes');
+    this.parent = cfg.parent;
+    this.x = cfg.x;
+    this.y = cfg.y;
+    this.render();
+  },
+  
+  render: function () {
+    
+    this.$el.html(template('template-color'));
+    
+    this.$el.find('.color-' + this.model.get('color')).addClass('is-active');
+    
+    this.$main.append(this.$el);
+    
+    this.$el.transition({
+      scale: 1
+    });
+    
+    var height = this.$el.height(),
+      top = this.y + height / 2.5,
+      parentTop = $(window).scrollTop() + $(window).height();
+    
+    if ((top + height) > parentTop) {
+      top -= (height * 1.8);
+    }
+    
+    this.$el.css({
+      top: (top),
+      left: (this.x - this.$el.width() / 2)
+    });
+    this.$el.focus();
+  },
+  focusOut: function (ev) {
+    ev.preventDefault();
+    var _this = this;
+    this.$el.transition({
+      opacity: 0
+    }, function () {
+      _this.remove();
+    });
+  },
+  changeColor: function (ev) {
+    ev.preventDefault();
+    console.log(ev);
+    var color = $(ev.target).parent().data('color');
+    this.model.save({'color': color}, {silent: true});
+    this.parent.render();
+    this.remove();
+  }
+});
 SRCNotes.EditView = Backbone.View.extend({
   tagName: 'div',
   className: 'edit-form',
@@ -524,31 +593,44 @@ SRCNotes.NoteView = Backbone.View.extend({
     'click a.js-open-link': 'openNote',
     'click a.js-option-open': 'toggleOptionPanel',
     'click a.js-option-close': 'hideOption',
-    'click a.js-options-delete': 'removeItem'
+    'click a.js-option-delete': 'removeItem',
+    'click a.js-option-color': 'showColorPanel'
   },
 
   initialize: function (cfg) {
-    _.bindAll(this, 'render', 'openNote', 'toggleOptionPanel', 'hideOption', 'removeItem');
+    _.bindAll(this, 'render', 'openNote',
+            'toggleOptionPanel', 'hideOption',
+            'removeItem', 'showColorPanel');
     this.listView = cfg.listView;
 
     this.model.on('destroy', function () {
-      this.$el.slideUp(400, function () {
+      this.$el.slideUp(150, function () {
         this.remove();
       });
     }, this);
 
     this.model.on('show', function () {
-      this.$el.slideDown();
+      this.$el.show();
     }, this);
 
     this.model.on('hide', function () {
-      this.$el.slideUp();
+      var $el = this.$el;
+      this.$el.hide();
     }, this);
+    
+    this.model.on('change:color', function () {
+      console.log(123);
+      this.render();
+      return false;
+    }, this);
+    
   },
 
   render: function () {
-    this.$el.html(template('tempate-note', {
-      title: this.model.escape('title')
+    console.log(this.model.get('color'));
+    this.$el.html(template('template-note', {
+      title: this.model.escape('title'),
+      color: this.model.get('color')
     }));
     return this;
   },
@@ -579,6 +661,16 @@ SRCNotes.NoteView = Backbone.View.extend({
   
   removeItem: function () {
     this.model.destroy();
+  },
+  
+  showColorPanel: function (ev) {
+    console.log(ev);
+    new SRCNotes.ColorView({
+      model: this.model,
+      parent: this,
+      x: ev.clientX,
+      y: ev.clientY
+    });
   }
 });
 

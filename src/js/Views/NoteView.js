@@ -5,31 +5,44 @@ SRCNotes.NoteView = Backbone.View.extend({
     'click a.js-open-link': 'openNote',
     'click a.js-option-open': 'toggleOptionPanel',
     'click a.js-option-close': 'hideOption',
-    'click a.js-options-delete': 'removeItem'
+    'click a.js-option-delete': 'removeItem',
+    'click a.js-option-color': 'showColorPanel'
   },
 
   initialize: function (cfg) {
-    _.bindAll(this, 'render', 'openNote', 'toggleOptionPanel', 'hideOption', 'removeItem');
+    _.bindAll(this, 'render', 'openNote',
+            'toggleOptionPanel', 'hideOption',
+            'removeItem', 'showColorPanel');
     this.listView = cfg.listView;
 
     this.model.on('destroy', function () {
-      this.$el.slideUp(400, function () {
+      this.$el.slideUp(150, function () {
         this.remove();
       });
     }, this);
 
     this.model.on('show', function () {
-      this.$el.slideDown();
+      this.$el.show();
     }, this);
 
     this.model.on('hide', function () {
-      this.$el.slideUp();
+      var $el = this.$el;
+      this.$el.hide();
     }, this);
+    
+    this.model.on('change:color', function () {
+      console.log(123);
+      this.render();
+      return false;
+    }, this);
+    
   },
 
   render: function () {
-    this.$el.html(template('tempate-note', {
-      title: this.model.escape('title')
+    console.log(this.model.get('color'));
+    this.$el.html(template('template-note', {
+      title: this.model.escape('title'),
+      color: this.model.get('color')
     }));
     return this;
   },
@@ -60,5 +73,15 @@ SRCNotes.NoteView = Backbone.View.extend({
   
   removeItem: function () {
     this.model.destroy();
+  },
+  
+  showColorPanel: function (ev) {
+    console.log(ev);
+    new SRCNotes.ColorView({
+      model: this.model,
+      parent: this,
+      x: ev.clientX,
+      y: ev.clientY
+    });
   }
 });

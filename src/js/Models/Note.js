@@ -1,6 +1,7 @@
 SRCNotes.Note = Backbone.Model.extend({
   defaults: {
-    type: 'srcnote'
+    type: 'srcnote',
+    color: 'default'
   },
   initialize: function (atributes, options) {
     atributes.date = atributes.date || new Date();

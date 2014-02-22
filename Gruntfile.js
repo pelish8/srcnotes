@@ -35,6 +35,7 @@ module.exports = function (grunt) {
     concat: {
       js: {
         src: [
+          './src/js/constants.js',
           './src/js/helpers.js',
           './src/js/sync.js',
           './src/js/Models/*',
@@ -53,6 +54,7 @@ module.exports = function (grunt) {
         src: [
           './components/jquery/jquery.js',
           './components/jQuery.scrollToElement/jquery.scrollToElement.js',
+          './components/jquery.transit/jquery.transit.js',
           './components/localforage/dist/localforage.js',
           './components/underscore/underscore.js',
           './components/backbone/backbone.js',

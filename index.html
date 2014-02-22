@@ -36,8 +36,8 @@
     </script>
 
     <!-- note tempate -->
-    <script type="text/html" charset="utf-8" id="tempate-note">
-    <div class="link-panel js-link-panel">
+    <script type="text/html" charset="utf-8" id="template-note">
+    <div class="link-panel color-{{ color }} js-link-panel">
       <div class="l-open-link">
         <a href="#" class="js-open-link" title="{{ title }}">{{ title }}</a>
       </div>
@@ -48,9 +48,15 @@
     
     <div class="options-panel js-options-panel">
       <div class="l-options-actions">
-        <div class="pure-g">
-          <div class="pure-u-3-8">
-            <a href="#" class="js-options-delete" title="{{ title }}"><i class="fa fa-trash-o"></i></a>
+        <div class="pure-g wrapper">
+          <div class="pure-u-1-6">
+            <a href="#" class="js-option-delete" title="{{ title }}"><i class="fa fa-trash-o"></i></a>
+          </div>
+          <div class="pure-u-1-6">
+            <a href="#" class="color-{{ color }} js-option-color" title="{{ title }}"><i class="fa fa-square"></i></a>
+          </div>
+          <div class="pure-u-1-6">
+            <a href="#" class="js-option-archive" title="{{ title }}"><i class="fa fa-archive"></i></a>
           </div>
         </div>
       </div>
@@ -58,7 +64,16 @@
         <a href="#" class="js-option-close option-close"><i class="fa fa-times"></i></a>
       </div>
     </div>
+    </script>
     
+    <script type="text/html" charset="utf-8" id="template-color">
+        <ul>
+          <li><a class="color-default" href="#"data-color="default"><i class="fa fa-square"></i></a></li>
+          <li><a class="color-red" href="#"data-color="red"><i class="fa fa-square"></i></a></li>
+          <li><a class="color-yellow" href="#" data-color="yellow"><i class="fa fa-square"></i></a></li>
+          <li><a class="color-green" href="#" data-color="green"><i class="fa fa-square"></i></a></li>
+          <li><a class="color-blue" href="#" data-color="blue"><i class="fa fa-square"></i></a></li>
+        </ul>
     </script>
 
     <!-- action template -->

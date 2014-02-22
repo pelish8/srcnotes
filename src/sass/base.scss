@@ -19,4 +19,33 @@
   button {
     border: 0;
   }
+  a {
+    color: $font-color;
+  }
+  
+  .color-default a,
+  a.color-default {
+    color: $font-color;
+  }
+
+  .color-red a,
+  a.color-red {
+    color: #f2777a;
+  }
+
+  .color-yellow a,
+  a.color-yellow {
+    color: #ffcc66;
+  }
+
+  .color-green a,
+  a.color-green {
+    color: #99cc99;
+  }
+
+  .color-blue a,
+  a.color-blue {
+    color: #6699cc;
+  }
+  
 }

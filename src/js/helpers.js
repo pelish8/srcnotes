@@ -48,6 +48,10 @@ var helpers = {
   },
   escapeRegExp: function (text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  },
+  
+  isTouch: function () {
+    return 'ontouchstart' in window || 'onmsgesturechange' in window;
   }
 };
 
