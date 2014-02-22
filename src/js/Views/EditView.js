@@ -39,7 +39,7 @@ SRCNotes.EditView = Backbone.View.extend({
     if (item) {
       this.model = item;
     }
-    $(this.el).html(template('template-edit-view', {
+    this.$el.html(template('template-edit-view', {
       title: this.model.escape('title'),
       content: this.model.escape('content')
     }));
@@ -78,7 +78,7 @@ SRCNotes.EditView = Backbone.View.extend({
   },
   hide: function () {
     this.$el.hide();
-    // this.remove();
+    this.remove();
   },
   show: function () {
     this.$el.show();

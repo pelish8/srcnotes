@@ -13,6 +13,7 @@ SRCNotes.NoteView = Backbone.View.extend({
     _.bindAll(this, 'render', 'openNote',
             'toggleOptionPanel', 'hideOption',
             'removeItem', 'showColorPanel');
+
     this.listView = cfg.listView;
 
     this.model.on('destroy', function () {
@@ -29,17 +30,9 @@ SRCNotes.NoteView = Backbone.View.extend({
       var $el = this.$el;
       this.$el.hide();
     }, this);
-    
-    this.model.on('change:color', function () {
-      console.log(123);
-      this.render();
-      return false;
-    }, this);
-    
   },
 
   render: function () {
-    console.log(this.model.get('color'));
     this.$el.html(template('template-note', {
       title: this.model.escape('title'),
       color: this.model.get('color')
@@ -54,9 +47,7 @@ SRCNotes.NoteView = Backbone.View.extend({
   
   toggleOptionPanel: function (ev) {
     ev.preventDefault();
-    
     this.listView.removeActiveNote();
-    
     this.$el.find('.js-link-panel').toggle();
     this.$el.find('.js-options-panel').toggle();
     

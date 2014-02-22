@@ -6,7 +6,7 @@ SRCNotes.ListView = Backbone.View.extend({
     'keyup input.js-note-name': 'filterNotes',
     'submit form.js-add-new-item': 'addItem',
     'keydown #notes': 'moveCursor',
-    'focus input.js-note-name': 'noteNateFocus'
+    'focus input.js-note-name': 'noteNameFocus'
   },
 
   templates: {},
@@ -15,17 +15,15 @@ SRCNotes.ListView = Backbone.View.extend({
     _.bindAll(this, 'render', 'addItem',
               'moveFocus', 'clearSearch',
               'moveCursor', 'filterNotes',
-              'noteNateFocus');
-    
-    // Router = new SRCNotes.Router({
-    //   listView: this
-    // });
+              'noteNameFocus');
+
     this.items = cfg.items;
     if (!this.items.fetched) {
       this.items.fetch();
     } else {
       this.render();
     }
+
     this.items.on('add', function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
@@ -139,17 +137,16 @@ SRCNotes.ListView = Backbone.View.extend({
     switch (ev.keyCode) {
     case 40:
       this.moveDown(ev);
-      ev.preventDefault();
       break;
     case 38:
       this.moveUp(ev);
-      ev.preventDefault();
       break;
     case 13:
       // open note when enter key is pressed
       this.openNote(ev);
-      ev.preventDefault();
       break;
+    default:
+      ev.preventDefault();
     }
   },
 
@@ -178,21 +175,21 @@ SRCNotes.ListView = Backbone.View.extend({
     }
     this.$visibleNotes.eq(this.index + 1).removeClass('focus');
   },
-  
+
   openNote: function () {
     this.$visibleNotes.eq(this.index).find('a').trigger('click');
     this.$visibleNotes.eq(this.index).removeClass('focus');
   },
-  
-  noteNateFocus: function () {
+
+  noteNameFocus: function () {
     this.removeActiveNote();
   },
-  
-  // note where option is visible
+
+  // note when option is visible
   setActiveNote: function (note) {
     this.actioveNote = note;
   },
-  
+
   removeActiveNote: function () {
     if (this.actioveNote) {
       this.actioveNote.hideOption();
@@ -202,6 +199,7 @@ SRCNotes.ListView = Backbone.View.extend({
       this.$visibleNotes.eq(this.index).removeClass('focus');
     }
   },
+
   show: function (reset) {
     this.$el.find('.l-note').show();
     if (reset) {
@@ -209,6 +207,7 @@ SRCNotes.ListView = Backbone.View.extend({
       this.$el.find('.js-note-name').focus().trigger('keyup');
     }
   },
+
   hide: function () {
     this.$el.find('.l-note').hide();
   }

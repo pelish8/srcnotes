@@ -13,7 +13,6 @@
     border-radius: 0;
     background: $background-color;
     color: $edit-form-button-text-color;
-    // border-bottom: solid 0.3em $border-color;
     font-size: 2.5em;
     padding: 0;
     height: 1.3em;
@@ -21,7 +20,6 @@
     &:hover {
       background: $hover-color;
     }
-  // border-bottom: solid 0.3em $border-color;
   }
     
   .note-content {

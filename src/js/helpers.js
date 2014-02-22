@@ -4,7 +4,7 @@ _.templateSettings = {
 
 
 var helpers = {
-  
+
   S4: function () {
     return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
   },
@@ -24,6 +24,7 @@ var helpers = {
     }
     return 'id-' + parseInt(hash, 16);
   },
+  // used to migrate data from locaStorage to localforage
   migrateFromLocalStore: function () {
     var keyss = [];
     for (var key in localStorage) {
@@ -59,5 +60,3 @@ function template(id, data) {
   var tpl = _.template($('#' + id).text());
   return tpl(data);
 }
-
-// helpers.migrateFromLocalStore();

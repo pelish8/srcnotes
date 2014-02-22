@@ -6,9 +6,10 @@ SRCNotes.Router = Backbone.Router.extend({
   initialize: function (cfg) {
     _.bindAll(this, 'showEditView', 'openNote', 'showListView');
     this.items = new SRCNotes.Notes();
-    
+
     Backbone.history.start();
   },
+
   showEditView: function (id) {
     if (!this.items.fetched) {
       this.items.fetch();
@@ -19,6 +20,7 @@ SRCNotes.Router = Backbone.Router.extend({
       this.openNote(id);
     }
   },
+
   openNote: function (id) {
     item = this.items.get(id);
     if (item) {
@@ -32,10 +34,12 @@ SRCNotes.Router = Backbone.Router.extend({
       });
     } else {
       // console.error('note not found');
+      // @todo need to open new page not found or redirect to list view
     }
   },
+
   showListView: function () {
-    // this.listView.show();
+
     if (!this.listView) {
       this.listView = new SRCNotes.ListView({
         items: this.items

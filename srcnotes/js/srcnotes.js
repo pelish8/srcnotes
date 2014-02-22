@@ -7,7 +7,7 @@ _.templateSettings = {
 
 
 var helpers = {
-  
+
   S4: function () {
     return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
   },
@@ -27,6 +27,7 @@ var helpers = {
     }
     return 'id-' + parseInt(hash, 16);
   },
+  // used to migrate data from locaStorage to localforage
   migrateFromLocalStore: function () {
     var keyss = [];
     for (var key in localStorage) {
@@ -63,10 +64,10 @@ function template(id, data) {
   return tpl(data);
 }
 
-// helpers.migrateFromLocalStore();
 SRCNotes.sync = {
   action: function (method, model, options) {
     var _this = this;
+
     switch (method) {
     case 'create':
       this.createAction(model, options);
@@ -81,12 +82,10 @@ SRCNotes.sync = {
       });
       break;
     case 'update':
-      // this.updateAction(model, options);
       this.getStoreKeys(function (keys) {
-        if (!keys) {
-          return;
+        if (keys) {
+          _this.updateAction.call(_this, keys, model, options);
         }
-        _this.updateAction.call(_this, keys, model, options);
       });
       break;
     case 'delete':
@@ -98,6 +97,7 @@ SRCNotes.sync = {
   createAction: function (model, options) {
     var _this = this,
       localId = model.get('localId');
+
     localforage.setItem(localId, JSON.stringify(model.toJSON()), function () {
       _this.setStoreKey(localId);
       options.success(model.toJSON());
@@ -152,14 +152,14 @@ SRCNotes.sync = {
     });
   },
   
-  getStoreKeys: function (cb) {
+  getStoreKeys: function (callback) {
     localforage.getItem('srcnote-key', function (keys) {
       if (_.isString(keys)) {
         keys = JSON.parse(keys);
       } else {
         keys = [];
       }
-      cb(keys);
+      callback(keys);
     });
   },
   setStoreKey: function (newKey) {
@@ -240,9 +240,11 @@ SRCNotes.ColorView = Backbone.View.extend({
   },
   
   render: function () {
-    
+    var elHeight,
+      top,
+      parentTop;
+
     this.$el.html(template('template-color'));
-    
     this.$el.find('.color-' + this.model.get('color')).addClass('is-active');
     
     this.$main.append(this.$el);
@@ -251,20 +253,21 @@ SRCNotes.ColorView = Backbone.View.extend({
       scale: 1
     });
     
-    var height = this.$el.height(),
-      top = this.y + height / 2.5,
-      parentTop = $(window).scrollTop() + $(window).height();
+    elHeight = this.$el.height();
+    top = this.y + elHeight / 2.5;
+    parentTop = $(window).scrollTop() + $(window).height();
     
-    if ((top + height) > parentTop) {
-      top -= (height * 1.8);
+    if ((top + elHeight) > parentTop) {
+      top -= (elHeight * 1.8);
     }
     
     this.$el.css({
-      top: (top),
+      top: top,
       left: (this.x - this.$el.width() / 2)
     });
     this.$el.focus();
   },
+
   focusOut: function (ev) {
     ev.preventDefault();
     var _this = this;
@@ -274,9 +277,9 @@ SRCNotes.ColorView = Backbone.View.extend({
       _this.remove();
     });
   },
+
   changeColor: function (ev) {
     ev.preventDefault();
-    console.log(ev);
     var color = $(ev.target).parent().data('color');
     this.model.save({'color': color}, {silent: true});
     this.parent.render();
@@ -324,7 +327,7 @@ SRCNotes.EditView = Backbone.View.extend({
     if (item) {
       this.model = item;
     }
-    $(this.el).html(template('template-edit-view', {
+    this.$el.html(template('template-edit-view', {
       title: this.model.escape('title'),
       content: this.model.escape('content')
     }));
@@ -363,7 +366,7 @@ SRCNotes.EditView = Backbone.View.extend({
   },
   hide: function () {
     this.$el.hide();
-    // this.remove();
+    this.remove();
   },
   show: function () {
     this.$el.show();
@@ -378,7 +381,7 @@ SRCNotes.ListView = Backbone.View.extend({
     'keyup input.js-note-name': 'filterNotes',
     'submit form.js-add-new-item': 'addItem',
     'keydown #notes': 'moveCursor',
-    'focus input.js-note-name': 'noteNateFocus'
+    'focus input.js-note-name': 'noteNameFocus'
   },
 
   templates: {},
@@ -387,17 +390,15 @@ SRCNotes.ListView = Backbone.View.extend({
     _.bindAll(this, 'render', 'addItem',
               'moveFocus', 'clearSearch',
               'moveCursor', 'filterNotes',
-              'noteNateFocus');
-    
-    // Router = new SRCNotes.Router({
-    //   listView: this
-    // });
+              'noteNameFocus');
+
     this.items = cfg.items;
     if (!this.items.fetched) {
       this.items.fetch();
     } else {
       this.render();
     }
+
     this.items.on('add', function (model) {
       var tpl = new SRCNotes.NoteView({
         model: model,
@@ -511,17 +512,16 @@ SRCNotes.ListView = Backbone.View.extend({
     switch (ev.keyCode) {
     case 40:
       this.moveDown(ev);
-      ev.preventDefault();
       break;
     case 38:
       this.moveUp(ev);
-      ev.preventDefault();
       break;
     case 13:
       // open note when enter key is pressed
       this.openNote(ev);
-      ev.preventDefault();
       break;
+    default:
+      ev.preventDefault();
     }
   },
 
@@ -550,21 +550,21 @@ SRCNotes.ListView = Backbone.View.extend({
     }
     this.$visibleNotes.eq(this.index + 1).removeClass('focus');
   },
-  
+
   openNote: function () {
     this.$visibleNotes.eq(this.index).find('a').trigger('click');
     this.$visibleNotes.eq(this.index).removeClass('focus');
   },
-  
-  noteNateFocus: function () {
+
+  noteNameFocus: function () {
     this.removeActiveNote();
   },
-  
-  // note where option is visible
+
+  // note when option is visible
   setActiveNote: function (note) {
     this.actioveNote = note;
   },
-  
+
   removeActiveNote: function () {
     if (this.actioveNote) {
       this.actioveNote.hideOption();
@@ -574,6 +574,7 @@ SRCNotes.ListView = Backbone.View.extend({
       this.$visibleNotes.eq(this.index).removeClass('focus');
     }
   },
+
   show: function (reset) {
     this.$el.find('.l-note').show();
     if (reset) {
@@ -581,6 +582,7 @@ SRCNotes.ListView = Backbone.View.extend({
       this.$el.find('.js-note-name').focus().trigger('keyup');
     }
   },
+
   hide: function () {
     this.$el.find('.l-note').hide();
   }
@@ -601,6 +603,7 @@ SRCNotes.NoteView = Backbone.View.extend({
     _.bindAll(this, 'render', 'openNote',
             'toggleOptionPanel', 'hideOption',
             'removeItem', 'showColorPanel');
+
     this.listView = cfg.listView;
 
     this.model.on('destroy', function () {
@@ -617,17 +620,9 @@ SRCNotes.NoteView = Backbone.View.extend({
       var $el = this.$el;
       this.$el.hide();
     }, this);
-    
-    this.model.on('change:color', function () {
-      console.log(123);
-      this.render();
-      return false;
-    }, this);
-    
   },
 
   render: function () {
-    console.log(this.model.get('color'));
     this.$el.html(template('template-note', {
       title: this.model.escape('title'),
       color: this.model.get('color')
@@ -642,9 +637,7 @@ SRCNotes.NoteView = Backbone.View.extend({
   
   toggleOptionPanel: function (ev) {
     ev.preventDefault();
-    
     this.listView.removeActiveNote();
-    
     this.$el.find('.js-link-panel').toggle();
     this.$el.find('.js-options-panel').toggle();
     
@@ -682,9 +675,10 @@ SRCNotes.Router = Backbone.Router.extend({
   initialize: function (cfg) {
     _.bindAll(this, 'showEditView', 'openNote', 'showListView');
     this.items = new SRCNotes.Notes();
-    
+
     Backbone.history.start();
   },
+
   showEditView: function (id) {
     if (!this.items.fetched) {
       this.items.fetch();
@@ -695,6 +689,7 @@ SRCNotes.Router = Backbone.Router.extend({
       this.openNote(id);
     }
   },
+
   openNote: function (id) {
     item = this.items.get(id);
     if (item) {
@@ -708,10 +703,12 @@ SRCNotes.Router = Backbone.Router.extend({
       });
     } else {
       // console.error('note not found');
+      // @todo need to open new page not found or redirect to list view
     }
   },
+
   showListView: function () {
-    // this.listView.show();
+
     if (!this.listView) {
       this.listView = new SRCNotes.ListView({
         items: this.items
@@ -724,16 +721,6 @@ SRCNotes.Router = Backbone.Router.extend({
     }
   }
 });
-
-// var app = new SRCNotes.ListView();
-// Backbone.history.start();
-// new SRCNotes.Notes();
-// notesapp.items.fetch();
-// notesapp.render();
-
-// localforage.getItem('srcnote-key', function () {
-//   console.log(arguments);
-// });
 
 Router = new SRCNotes.Router();
 }).call(this, jQuery, _, Backbone);

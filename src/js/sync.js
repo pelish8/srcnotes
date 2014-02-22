@@ -1,6 +1,7 @@
 SRCNotes.sync = {
   action: function (method, model, options) {
     var _this = this;
+
     switch (method) {
     case 'create':
       this.createAction(model, options);
@@ -15,12 +16,10 @@ SRCNotes.sync = {
       });
       break;
     case 'update':
-      // this.updateAction(model, options);
       this.getStoreKeys(function (keys) {
-        if (!keys) {
-          return;
+        if (keys) {
+          _this.updateAction.call(_this, keys, model, options);
         }
-        _this.updateAction.call(_this, keys, model, options);
       });
       break;
     case 'delete':
@@ -32,6 +31,7 @@ SRCNotes.sync = {
   createAction: function (model, options) {
     var _this = this,
       localId = model.get('localId');
+
     localforage.setItem(localId, JSON.stringify(model.toJSON()), function () {
       _this.setStoreKey(localId);
       options.success(model.toJSON());
@@ -86,14 +86,14 @@ SRCNotes.sync = {
     });
   },
   
-  getStoreKeys: function (cb) {
+  getStoreKeys: function (callback) {
     localforage.getItem('srcnote-key', function (keys) {
       if (_.isString(keys)) {
         keys = JSON.parse(keys);
       } else {
         keys = [];
       }
-      cb(keys);
+      callback(keys);
     });
   },
   setStoreKey: function (newKey) {

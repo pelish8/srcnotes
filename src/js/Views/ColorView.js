@@ -19,9 +19,11 @@ SRCNotes.ColorView = Backbone.View.extend({
   },
   
   render: function () {
-    
+    var elHeight,
+      top,
+      parentTop;
+
     this.$el.html(template('template-color'));
-    
     this.$el.find('.color-' + this.model.get('color')).addClass('is-active');
     
     this.$main.append(this.$el);
@@ -30,20 +32,21 @@ SRCNotes.ColorView = Backbone.View.extend({
       scale: 1
     });
     
-    var height = this.$el.height(),
-      top = this.y + height / 2.5,
-      parentTop = $(window).scrollTop() + $(window).height();
+    elHeight = this.$el.height();
+    top = this.y + elHeight / 2.5;
+    parentTop = $(window).scrollTop() + $(window).height();
     
-    if ((top + height) > parentTop) {
-      top -= (height * 1.8);
+    if ((top + elHeight) > parentTop) {
+      top -= (elHeight * 1.8);
     }
     
     this.$el.css({
-      top: (top),
+      top: top,
       left: (this.x - this.$el.width() / 2)
     });
     this.$el.focus();
   },
+
   focusOut: function (ev) {
     ev.preventDefault();
     var _this = this;
@@ -53,9 +56,9 @@ SRCNotes.ColorView = Backbone.View.extend({
       _this.remove();
     });
   },
+
   changeColor: function (ev) {
     ev.preventDefault();
-    console.log(ev);
     var color = $(ev.target).parent().data('color');
     this.model.save({'color': color}, {silent: true});
     this.parent.render();

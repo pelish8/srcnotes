@@ -22,7 +22,7 @@
 }
 
 .link-panel {
-  border-top: solid 1px $border-color;
+//  border-top: solid 1px $border-color;
   a {
     text-decoration: none;
     display: block;
@@ -62,29 +62,10 @@
       background: $background-color;
     }
   }
-  
-  
-//  &.color-red {
-//    color: #924445;
-//  }
-//  
-//  &.color-yellow a {
-//    color: #836833;
-//  }
-//  
-//  &.color-green {
-//    background: #486F48;
-//  }
-//  
-//  &.color-blue {
-//    background: #2C4966;
-//  }
-//  
-  
 }
 
 .options-panel {
-  border-top: solid 1px $border-color;
+//  border-top: solid 1px $border-color;
   display: none;
   background: $background-color-options-panel;
   margin-right: -100%;
