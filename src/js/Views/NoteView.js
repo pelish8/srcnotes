@@ -12,24 +12,29 @@ SRCNotes.NoteView = Backbone.View.extend({
   initialize: function (cfg) {
     _.bindAll(this, 'render', 'openNote',
             'toggleOptionPanel', 'hideOption',
-            'removeItem', 'showColorPanel');
+            'removeItem', 'showColorPanel',
+            'destroyEvent', 'showEvent',
+            'hideEvent');
 
     this.listView = cfg.listView;
+    
+    this.listenTo(this.model, 'destroy', this.destroyEvent);
+    this.listenTo(this.model, 'show', this.showEvent);
+    this.listenTo(this.model, 'hide', this.hideEvent);
+  },
 
-    this.model.on('destroy', function () {
-      this.$el.slideUp(150, function () {
-        this.remove();
-      });
-    }, this);
-
-    this.model.on('show', function () {
-      this.$el.show();
-    }, this);
-
-    this.model.on('hide', function () {
-      var $el = this.$el;
-      this.$el.hide();
-    }, this);
+  destroyEvent: function () {
+    this.$el.slideUp(150, function () {
+      this.remove();
+    });
+  },
+  
+  showEvent: function () {
+    this.$el.show();
+  },
+  
+  hideEvent: function () {
+    this.$el.hide();
   },
 
   render: function () {
@@ -63,11 +68,17 @@ SRCNotes.NoteView = Backbone.View.extend({
   },
   
   removeItem: function () {
-    this.model.destroy();
+    this.model.destroy({
+      success: function () {
+        new SRCNotes.InfoView({
+          message: 'Note deleted.',
+          type: 'info'
+        });
+      }
+    });
   },
   
   showColorPanel: function (ev) {
-    console.log(ev);
     new SRCNotes.ColorView({
       model: this.model,
       parent: this,

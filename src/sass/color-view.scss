@@ -12,9 +12,9 @@
   ul {
     padding: 0;
     margin: 0;
-    box-shadow: 1px 0px 20px 1px #2C2B2B;
+    box-shadow: $box-shadow;
     background: $background-color;
-    border-radius: 0.2em;
+    border-radius: $border-radius;
     border-color: $border-color;
     
     li {

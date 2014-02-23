@@ -30,22 +30,22 @@
 
   .color-red a,
   a.color-red {
-    color: #f2777a;
+    color: $color-red;
   }
 
   .color-yellow a,
   a.color-yellow {
-    color: #ffcc66;
+    color: $color-yellow;
   }
 
   .color-green a,
   a.color-green {
-    color: #99cc99;
+    color: $color-green;
   }
 
   .color-blue a,
   a.color-blue {
-    color: #6699cc;
+    color: $color-blue;
   }
   
 }

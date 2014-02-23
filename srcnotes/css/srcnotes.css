@@ -136,7 +136,6 @@
 .link-panel .l-info-link {
   font-size: 1em;
   width: 1em;
-  z-index: 99;
   position: absolute;
   right: 0;
   display: inline-block; }
@@ -307,3 +306,33 @@
       .colors-panel ul li a:hover {
         background: #434240;
         border-color: #434240; }
+
+#info-panel {
+  position: absolute;
+  display: none;
+  z-index: 3;
+  bottom: 1em; }
+
+.message {
+  background: #3a3a37;
+  box-shadow: 1px 0px 20px 1px #2C2B2B;
+  padding: 0.5em;
+  border-radius: 0.2em;
+  text-align: center;
+  margin: 0.5em;
+  opacity: 0; }
+  .message a {
+    float: right; }
+
+@media (min-width: 600px) {
+  #info-panel {
+    margin-left: 30%;
+    width: 40%; } }
+
+@media (max-width: 600px) {
+  #info-panel {
+    margin: 0;
+    width: 100%; } }
+
+.error-message {
+  color: #f2777a; }

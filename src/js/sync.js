@@ -1,7 +1,6 @@
 SRCNotes.sync = {
   action: function (method, model, options) {
     var _this = this;
-
     switch (method) {
     case 'create':
       this.createAction(model, options);
@@ -68,6 +67,12 @@ SRCNotes.sync = {
   },
 
   updateAction: function (keys, model, options) {
+    var newAttrs = model.toJSON(),
+    prevAttrs = model.previousAttributes();
+    
+    if (_.isEqual(newAttrs, prevAttrs)) {
+      return;
+    }
     if (_.indexOf(keys, model.get('localId')) === -1) {
       return this.createAction(model, options);
     }

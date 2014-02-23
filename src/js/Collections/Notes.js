@@ -3,9 +3,13 @@ SRCNotes.Notes = Backbone.Collection.extend({
   fetched: false,
   
   initialize: function () {
-    this.on('reset', function () {
-      this.fetched = true;
-    }, this);
+    _.bindAll(this, 'resetEvent');
+
+    this.listenTo(this, 'reset', this.resetEvent);
+  },
+  
+  resetEvent: function () {
+    this.fetched = true;
   },
   
   comparator: function (a, b) {

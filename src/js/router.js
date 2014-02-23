@@ -8,6 +8,8 @@ SRCNotes.Router = Backbone.Router.extend({
     this.items = new SRCNotes.Notes();
 
     Backbone.history.start();
+    this.$srcnotes = $('#srcnotes');
+    this.$srcnotes.append('<div id="info-panel"></div>');
   },
 
   showEditView: function (id) {
@@ -29,12 +31,13 @@ SRCNotes.Router = Backbone.Router.extend({
       }
       this.editView = new SRCNotes.EditView({
         model: item,
-        '$parent': $('#srcnotes'),
+        '$parent': this.$srcnotes,
         'show': true
       });
     } else {
       // console.error('note not found');
       // @todo need to open new page not found or redirect to list view
+      Router.navigate('', { trigger: true });
     }
   },
 
