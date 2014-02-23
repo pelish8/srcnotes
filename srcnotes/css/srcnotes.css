@@ -80,6 +80,8 @@
     color: #99cc99; }
   #srcnotes .color-blue a, #srcnotes a.color-blue {
     color: #6699cc; }
+  #srcnotes .color-purple a, #srcnotes a.color-purple {
+    color: #8066ff; }
 
 .l-note {
   display: none; }
@@ -295,7 +297,7 @@
     border-color: #32312f; }
     .colors-panel ul li {
       display: inline-block;
-      margin: 1em; }
+      margin: 1em 0.5em; }
       .colors-panel ul li a {
         font-size: 1.5em;
         border: solid 0.2333em #3a3a37;
