@@ -273,17 +273,24 @@ SRCNotes.ColorView = Backbone.View.extend({
     var _this = this;
     this.$el.transition({
       opacity: 0
-    }, function () {
+    }, 100, function () {
       _this.remove();
     });
   },
 
   changeColor: function (ev) {
     ev.preventDefault();
-    var color = $(ev.target).parent().data('color');
-    this.model.save({'color': color}, {silent: true});
-    this.parent.render();
-    this.remove();
+    var color = $(ev.target).parent().data('color'),
+      _this = this;
+
+    this.$el.transition({
+      opacity: 0
+    }, 100, function () {
+      _this.model.save({'color': color}, {silent: true});
+      _this.parent.render();
+      _this.remove();
+    });
+    
   }
 });
 SRCNotes.EditView = Backbone.View.extend({

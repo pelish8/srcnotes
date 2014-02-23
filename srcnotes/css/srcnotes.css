@@ -153,14 +153,16 @@
 
 .options-panel {
   display: none;
-  background: #32312f;
-  margin-right: -100%; }
+  background: #32312f; }
   .options-panel a {
     text-decoration: none;
     display: block;
     text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap; }
+    white-space: nowrap;
+    width: 3em;
+    padding: 1em;
+    margin: auto; }
   .options-panel .l-options-actions {
     display: inline-block;
     width: 94%; }
@@ -198,9 +200,8 @@
     border-radius: 0;
     background: #3a3a37;
     color: #e0dfdc;
-    font-size: 2.5em;
-    padding: 0;
-    height: 1.3em;
+    font-size: 1.5em;
+    padding: 0.69rem 0;
     border-right: solid 0.1em #3a3a37; }
     .edit-form .pure-button:hover {
       background: #434240; }

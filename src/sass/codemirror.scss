@@ -13,7 +13,7 @@ $codemirror-selected: lighten($input-fucus-color, 10%);
   box-shadow: none;
   resize: none;
   border-top: solid 0.1em $border-color;
-  font-size: 1em;
+  font-size: $font-size;
   font-style: normal;
   font-variant: normal;
   font-weight: normal;
