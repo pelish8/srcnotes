@@ -48,13 +48,13 @@ SRCNotes.ColorView = Backbone.View.extend({
   },
 
   focusOut: function (ev) {
-    ev.preventDefault();
-    var _this = this;
-    this.$el.transition({
-      opacity: 0
-    }, 100, function () {
-      _this.remove();
-    });
+    // ev.preventDefault();
+    // var _this = this;
+    // this.$el.transition({
+      // opacity: 0
+    // }, 100, function () {
+    this.remove();
+    // });
   },
 
   changeColor: function (ev) {

@@ -5,6 +5,7 @@
   width: 100%;
   .top-edit-menu {
     width: 100%;
+    background: $background-color;
   }
 
   .pure-button {
@@ -46,10 +47,11 @@
   }
 
   input.note-name {
-    border-left: solid 0.1em $background-color;
-    &:focus{
+    border: solid 0.1em $background-color;
+    width: 100%;
+    &:focus {
       border-color: desaturate($border-color, 30%);
-      border-left: solid 0.1em #3a3a37;
+      border: solid 0.1em $background-color;
     }
   }
 }

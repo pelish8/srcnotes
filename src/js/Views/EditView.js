@@ -32,7 +32,7 @@ SRCNotes.EditView = Backbone.View.extend({
       title: this.$el.find('input').val(),
       content: this.editor.getValue()
     });
-    return 'It looks like you have been editing something -- if you leave before submitting your changes will be lost.';
+    // return 'It looks like you have been editing something -- if you leave before submitting your changes will be lost.';
   },
 
   render: function (item) {
