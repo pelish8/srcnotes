@@ -15,8 +15,7 @@ SRCNotes.ListView = Backbone.View.extend({
     _.bindAll(this, 'render', 'addItem',
               'clearSearch', 'moveCursor',
               'filterNotes', 'noteNameFocus',
-              'addEvent', 'changeEvent',
-              'invalidEvent');
+              'addEvent', 'changeEvent');
 
     this.items = cfg.items;
     if (!this.items.fetched) {
@@ -28,9 +27,8 @@ SRCNotes.ListView = Backbone.View.extend({
     this.listenTo(this.items, 'add', this.addEvent);
     this.listenTo(this.items, 'change', this.changeEvent);
     this.listenTo(this.items, 'reset', this.render);
-    this.listenTo(this.items, 'invalid', this.invalidEvent);
   },
-  
+
   addEvent: function (model) {
     // check to see if error message exists and do not render note view
     if (!model.validateError) {
@@ -42,39 +40,25 @@ SRCNotes.ListView = Backbone.View.extend({
       // save template for later
       this.templates[model.id] = tpl;
       // go to edit view
-      Router.navigate('note/' + model.get('id'), { trigger: true });
+      Router.navigate('note/' + model.get('id'), true);
     }
   },
-  
+
   changeEvent: function (model) {
-    model.set({modified: new Date()}, {silent: true});
-    if (this.templates[model.id]) {
-      this.$notes.prepend(this.templates[model.id].render().el);
-    } else {
-      console.log(model);
+    if (!model.validateError) {
+      model.set({modified: new Date()}, {silent: true});
+      if (this.templates[model.id]) {
+        this.$notes.prepend(this.templates[model.id].render().el);
+      } else {
+        console.log(model);
+      }
     }
-  },
-  
-  invalidEvent: function (model, msg) {
-    if (this.error) {
-      console.log(this.error);
-      return;
-    }
-    var _this = this;
-    this.error = new SRCNotes.InfoView({
-      message: msg,
-      type: 'error'
-    });
-    // wait for user to close the message dialog so that we can display it again
-    this.error.once('remove', function () {
-      _this.error = null;
-    });
   },
 
   render: function () {
     var $app = $(template('template-list-view-l'));
     this.$el.append($app);
-    this.$notes = this.$el.find('#notes');
+    this.$notes = this.$('#notes');
     this.items.sort();
     this.items.each(function (model) {
       var tpl = new SRCNotes.NoteView({
@@ -93,29 +77,42 @@ SRCNotes.ListView = Backbone.View.extend({
 
   // intercept key event to find if we need to react
   findItem: function (ev) {
-    if (ev.keyCode === 40) {
-      // focus notes 
+    var key = ev.which;
+
+    if (key === 40) {
+      // focus notes
       this.focusNotes(ev);
       ev.preventDefault();
-    } else if (ev.shiftKey && ev.keyCode === 13) {
+    } else if (ev.shiftKey && key === 13) {
       // shift + enter opens first note in list
       ev.preventDefault();
-      this.$notes.find('li.js-list-item:visible').eq(0).find('a').trigger('click');
+      this.$notes.find('li.js-list-item:visible').eq(0).find('.js-open-link').trigger('click');
+    } else if (key === 27) {
+      // clean name value
+      $(ev.target).val('');
     }
   },
 
   // @todo waite for user to stop writing name
   filterNotes: function () {
-    var name = helpers.escapeRegExp(this.$el.find('.js-note-name').val()),
-      pattern = new RegExp('^' + name);//, 'i'); case insensitive
+    var name = helpers.escapeRegExp(this.$('.js-note-name').val()),
+      pattern = new RegExp('^' + name),//, 'i'); case insensitive
+      listItems = 0;
 
     this.items.each(function (model) {
       if (!pattern.test(model.get('title'))) {
         model.trigger('hide');
       } else {
         model.trigger('show');
+        listItems++;
       }
     });
+    if (!listItems) {
+      console.log('List is empty.');
+      this.$notes.find('.js-list-info').show();
+    } else {
+      this.$notes.find('.js-list-info').hide();
+    }
   },
 
   addItem: function (ev) {
@@ -123,14 +120,14 @@ SRCNotes.ListView = Backbone.View.extend({
     var title = $('.js-note-name').val(),
     item = this.items.get(helpers.hash(title));
     if (item) {
-      Router.navigate('note/' + item.get('id'), { trigger: true });
+      Backbone.history.navigate('note/' + item.get('id'), true);
     } else {
       this.items.create({title: title}, {validate: true});
     }
   },
 
   clearSearch: function () {
-    this.$el.find('.js-note-name').val('');
+    this.$('.js-note-name').val('');
     this.filterNotes();
   },
 
@@ -187,7 +184,7 @@ SRCNotes.ListView = Backbone.View.extend({
       this.$visibleNotes.eq(this.index).addClass('focus');
       this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
     } else {
-      var nameInput = this.$el.find('.js-note-name');
+      var nameInput = this.$('.js-note-name');
       nameInput.focus();
       nameInput.get(0).selectionEnd = nameInput.val().length;
       this.index--;
@@ -220,14 +217,14 @@ SRCNotes.ListView = Backbone.View.extend({
   },
 
   show: function (reset) {
-    this.$el.find('.l-note').show();
+    this.$('.l-note').show();
     if (reset) {
       this.clearSearch();
-      this.$el.find('.js-note-name').focus().trigger('keyup');
+      this.$('.js-note-name').focus().trigger('keyup');
     }
   },
 
   hide: function () {
-    this.$el.find('.l-note').hide();
+    this.$('.l-note').hide();
   }
 });

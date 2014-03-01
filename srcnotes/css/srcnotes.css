@@ -38,6 +38,9 @@
 .fa-archive:before {
   content: "\f187"; }
 
+.fa-info-circle:before {
+  content: "\f05a"; }
+
 .pure-form input.note-name {
   font-size: 1.5em; }
 
@@ -62,7 +65,7 @@
   #srcnotes input, #srcnotes textarea {
     font-family: Inconsolata, monospace; }
   #srcnotes textarea {
-    color: #b4b4b4; }
+    color: #b0aea6; }
     #srcnotes textarea:focus {
       color: #e0dfdc;
       background: #42423f; }
@@ -100,10 +103,15 @@
 
 .note-name {
   border-color: #32312f;
-  color: #b4b4b4;
+  color: #b0aea6;
   background: #3a3a37; }
   .note-name:focus {
     color: #e0dfdc; }
+
+.list-view-info-message {
+  padding: 0.5em 1em;
+  color: #b0aea6;
+  display: none; }
 
 #notes {
   background: #32312f;
@@ -246,7 +254,7 @@
   box-shadow: none;
   resize: none;
   border-top: solid 0.1em #32312f;
-  font-size: 1em;
+  font-size: 0.875em;
   font-style: normal;
   font-variant: normal;
   font-weight: normal;

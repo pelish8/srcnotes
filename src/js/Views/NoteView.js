@@ -6,7 +6,8 @@ SRCNotes.NoteView = Backbone.View.extend({
     'click a.js-option-open': 'toggleOptionPanel',
     'click a.js-option-close': 'hideOption',
     'click a.js-option-delete': 'removeItem',
-    'click a.js-option-color': 'showColorPanel'
+    'click a.js-option-color': 'showColorPanel',
+    'click a.js-option-info': 'showNoteInfoPanel'
   },
 
   initialize: function (cfg) {
@@ -14,7 +15,7 @@ SRCNotes.NoteView = Backbone.View.extend({
             'toggleOptionPanel', 'hideOption',
             'removeItem', 'showColorPanel',
             'destroyEvent', 'showEvent',
-            'hideEvent');
+            'hideEvent', 'showNoteInfoPanel');
 
     this.listView = cfg.listView;
     
@@ -47,22 +48,22 @@ SRCNotes.NoteView = Backbone.View.extend({
 
   openNote: function (ev) {
     ev.preventDefault();
-    Router.navigate('note/' + this.model.get('id'), { trigger: true });
+    Router.navigate('note/' + this.model.get('id'), true);
   },
   
   toggleOptionPanel: function (ev) {
     ev.preventDefault();
     this.listView.removeActiveNote();
-    this.$el.find('.js-link-panel').toggle();
-    this.$el.find('.js-options-panel').toggle();
+    this.$('.js-link-panel').toggle();
+    this.$('.js-options-panel').toggle();
     
     this.listView.setActiveNote(this);
   },
   
   hideOption: function () {
-    var $option = this.$el.find('.js-options-panel');
+    var $option = this.$('.js-options-panel');
     if ($option.is(':visible')) {
-      this.$el.find('.js-link-panel').toggle();
+      this.$('.js-link-panel').toggle();
       $option.toggle();
     }
   },
@@ -85,5 +86,10 @@ SRCNotes.NoteView = Backbone.View.extend({
       x: ev.clientX,
       y: ev.clientY
     });
+  },
+  
+  showNoteInfoPanel: function (ev) {
+    ev.preventDefault();
+    new SRCNotes.NoteInfoView();
   }
 });

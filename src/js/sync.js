@@ -67,17 +67,19 @@ SRCNotes.sync = {
   },
 
   updateAction: function (keys, model, options) {
-    var newAttrs = model.toJSON(),
-    prevAttrs = model.previousAttributes();
-    
-    if (_.isEqual(newAttrs, prevAttrs)) {
+
+    if (!model.changedAttributes()) {
+      options.changed = false;
+      options.success(model.toJSON(), options);
       return;
     }
+
+    options.changed = true;
     if (_.indexOf(keys, model.get('localId')) === -1) {
       return this.createAction(model, options);
     }
     localforage.setItem(model.get('localId'), JSON.stringify(model.toJSON()), function () {
-      options.success(model.toJSON());
+      options.success(model.toJSON(), options);
     });
     this.setStoreKey(model.get('localId'));
   },
@@ -87,10 +89,10 @@ SRCNotes.sync = {
       key = model.get('localId');
     localforage.removeItem(key, function () {
       _this.removeStoreKey(key);
-      options.success(model);
+      options.success(model, options);
     });
   },
-  
+
   getStoreKeys: function (callback) {
     localforage.getItem('srcnote-key', function (keys) {
       if (_.isString(keys)) {
@@ -105,7 +107,7 @@ SRCNotes.sync = {
     this.getStoreKeys(function (keys) {
       var index = _.indexOf(keys, newKey);
       if (index === -1) {
-        // move key to be last to awoide sorting 
+        // move key to be last to awoide sorting
         // keys.splice(index, 1);
         keys.push(newKey);
       }

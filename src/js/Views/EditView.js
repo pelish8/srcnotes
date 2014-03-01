@@ -2,34 +2,39 @@ SRCNotes.EditView = Backbone.View.extend({
   tagName: 'div',
   className: 'edit-form',
 
+  showList: false,
+
   events: {
     'submit form.js-edit-form': 'saveContent',
-    'click a.js-back': 'showList',
+    'click a.js-back': 'goBack',
     'keyup': 'keyUp'
   },
-    
+
   initialize: function (cfg) {
-    _.bindAll(this, 'saveContent', 'render', 'keyUp', 'onBeforeunLoad');
+    _.bindAll(this, 'saveContent', 'render', 'keyUp',
+                    'onBeforeunLoad', 'saveSuccess',
+                    'goBack');
+
     this.$parent = cfg.$parent;
 
     this.render();
 
     var interval = setInterval($.proxy(function () {
-      var el = this.$el.find('.js-edit-form');
+      var el = this.$('.js-edit-form');
 
       if ($.contains(document, el[0])) {
-        this.$el.find('.js-edit-form').submit();
+        this.$('.js-edit-form').submit();
       } else {
         clearInterval(interval);
       }
     }, this), 30000);
-    
+
     window.onbeforeunload = this.onBeforeunLoad;
   },
-  
+
   onBeforeunLoad: function () {
     this.model.save({
-      title: this.$el.find('input').val(),
+      title: this.$('.js-edit-note-name').val(),
       content: this.editor.getValue()
     });
     // return 'It looks like you have been editing something -- if you leave before submitting your changes will be lost.';
@@ -44,52 +49,67 @@ SRCNotes.EditView = Backbone.View.extend({
       content: this.model.escape('content')
     }));
     this.$parent.append(this.el);
-    this.$el.find('textarea').focus();
+    // this.$('textarea').focus();
 
-    this.editor = CodeMirror.fromTextArea(this.$el.find('#text-editor').get(0), {
+    this.editor = CodeMirror.fromTextArea(this.$('#text-editor').get(0), {
       lineNumbers: false,
       lineWrapping: true,
-      mode: 'markdown'
+      mode: 'markdown',
+      autofocus: true
     });
-  
+
   },
-    
+
   saveContent: function (ev) {
     ev.preventDefault();
     var $target = $(ev.target);
 
     this.model.save({
-      title: $target.find('input').val(),
+      title: $target.find('.js-edit-note-name').val(),
       content: this.editor.getValue()
     }, {
-      success: function () {
-        new SRCNotes.InfoView({
-          message: 'Note saved.',
-          type: 'info'
-        });
-      }
+      success: this.saveSuccess
     });
   },
 
-  showList: function (ev) {
-    ev.preventDefault();
-    // remvoe event
-    window.onbeforeunload = null;
-
-    this.$el.find('.js-edit-form').submit();
-    Router.navigate('', { trigger: true });
-    this.hide();
-  },
-  
-  keyUp: function (ev) {
-    if (ev.keyCode === 27) {
-      this.showList(ev);
+  saveSuccess: function (model, resp, options) {
+    if (options.changed) {
+      new SRCNotes.InfoView({
+        message: 'Note saved.',
+        type: 'info'
+      });
+    }
+    if (this.showList) {
+      Backbone.history.navigate('', true);
+      this.hide();
+      this.showList = false;
     }
   },
+
+  goBack: function (ev) {
+    ev.preventDefault();
+    // remove event
+    window.onbeforeunload = null;
+    this.showList = true;
+    this.$('.js-edit-form').submit();
+  },
+
+  keyUp: function (ev) {
+    if (ev.which === 27) {
+      var $name = $(ev.target);
+      if ($name.hasClass('js-edit-note-name')) {
+        $name.val(this.model.get('title'));
+      } else {
+        this.goBack(ev);
+      }
+    }
+  },
+
   hide: function () {
     this.$el.hide();
     this.remove();
   },
+
   show: function () {
     this.$el.show();
   }

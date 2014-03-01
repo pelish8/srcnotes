@@ -133,17 +133,19 @@ SRCNotes.sync = {
   },
 
   updateAction: function (keys, model, options) {
-    var newAttrs = model.toJSON(),
-    prevAttrs = model.previousAttributes();
-    
-    if (_.isEqual(newAttrs, prevAttrs)) {
+
+    if (!model.changedAttributes()) {
+      options.changed = false;
+      options.success(model.toJSON(), options);
       return;
     }
+
+    options.changed = true;
     if (_.indexOf(keys, model.get('localId')) === -1) {
       return this.createAction(model, options);
     }
     localforage.setItem(model.get('localId'), JSON.stringify(model.toJSON()), function () {
-      options.success(model.toJSON());
+      options.success(model.toJSON(), options);
     });
     this.setStoreKey(model.get('localId'));
   },
@@ -153,10 +155,10 @@ SRCNotes.sync = {
       key = model.get('localId');
     localforage.removeItem(key, function () {
       _this.removeStoreKey(key);
-      options.success(model);
+      options.success(model, options);
     });
   },
-  
+
   getStoreKeys: function (callback) {
     localforage.getItem('srcnote-key', function (keys) {
       if (_.isString(keys)) {
@@ -171,7 +173,7 @@ SRCNotes.sync = {
     this.getStoreKeys(function (keys) {
       var index = _.indexOf(keys, newKey);
       if (index === -1) {
-        // move key to be last to awoide sorting 
+        // move key to be last to awoide sorting
         // keys.splice(index, 1);
         keys.push(newKey);
       }
@@ -197,17 +199,24 @@ SRCNotes.Note = Backbone.Model.extend({
     type: 'srcnote',
     color: 'default'
   },
-  
+
   initialize: function (atributes, options) {
     atributes.date = atributes.date || new Date();
-    atributes.id = helpers.hash(atributes.title);
+    atributes.id = atributes.id || helpers.hash(atributes.title);
     atributes.localId = atributes.localId || helpers.guid();
     this.set(atributes, options);
   },
-  
+
   validate: function (attrs, options) {
     if (!attrs.title.length) {
       return 'Name cannot be empty.';
+    }
+
+    if (this.get('title') !== attrs.title) {
+      var model = this.collection.findWhere({title: attrs.title});
+      if (model) {
+        return 'Note with that name already exists.';
+      }
     }
   }
 });
@@ -215,25 +224,50 @@ SRCNotes.Note = Backbone.Model.extend({
 SRCNotes.Notes = Backbone.Collection.extend({
   model: SRCNotes.Note,
   fetched: false,
-  
+
   initialize: function () {
-    _.bindAll(this, 'resetEvent');
+    _.bindAll(this, 'resetEvent', 'invalidEvent');
 
     this.listenTo(this, 'reset', this.resetEvent);
+    this.listenTo(this, 'invalid', this.invalidEvent);
   },
-  
+
   resetEvent: function () {
     this.fetched = true;
   },
-  
+
   comparator: function (a, b) {
     a = a.get('modified') ? a.get('modified').getTime() : a.get('date').getTime();
     b = b.get('modified') ? b.get('modified').getTime() : b.get('date').getTime();
     return a > b ?  1
           : a < b ? -1
           :          0;
+  },
+  errorList: [],
+
+  invalidEvent: function (model, msg) {
+    // prevent displaying the same error multiple times
+    if (_.indexOf(this.errorList, msg) > -1) {
+      return;
+    }
+
+    this.errorList.push(msg);
+    var _this = this;
+    this.error = new SRCNotes.InfoView({
+      message: msg,
+      type: 'error'
+    });
+    // wait for user to close the message dialog so that we can display it again
+    this.listenToOnce(this.error, 'remove', function () {
+      var index = _.indexOf(_this.errorList, msg);
+      if (index > -1) {
+        _this.errorList.splice(index, 1);
+      }
+      _this.error = null;
+    });
   }
 });
+
 
 SRCNotes.ColorView = Backbone.View.extend({
   tagName: 'div',
@@ -261,7 +295,7 @@ SRCNotes.ColorView = Backbone.View.extend({
       parentTop;
 
     this.$el.html(template('template-color'));
-    this.$el.find('.color-' + this.model.get('color')).addClass('is-active');
+    this.$('.color-' + this.model.get('color')).addClass('is-active');
     
     this.$main.append(this.$el);
     
@@ -313,34 +347,39 @@ SRCNotes.EditView = Backbone.View.extend({
   tagName: 'div',
   className: 'edit-form',
 
+  showList: false,
+
   events: {
     'submit form.js-edit-form': 'saveContent',
-    'click a.js-back': 'showList',
+    'click a.js-back': 'goBack',
     'keyup': 'keyUp'
   },
-    
+
   initialize: function (cfg) {
-    _.bindAll(this, 'saveContent', 'render', 'keyUp', 'onBeforeunLoad');
+    _.bindAll(this, 'saveContent', 'render', 'keyUp',
+                    'onBeforeunLoad', 'saveSuccess',
+                    'goBack');
+
     this.$parent = cfg.$parent;
 
     this.render();
 
     var interval = setInterval($.proxy(function () {
-      var el = this.$el.find('.js-edit-form');
+      var el = this.$('.js-edit-form');
 
       if ($.contains(document, el[0])) {
-        this.$el.find('.js-edit-form').submit();
+        this.$('.js-edit-form').submit();
       } else {
         clearInterval(interval);
       }
     }, this), 30000);
-    
+
     window.onbeforeunload = this.onBeforeunLoad;
   },
-  
+
   onBeforeunLoad: function () {
     this.model.save({
-      title: this.$el.find('input').val(),
+      title: this.$('.js-edit-note-name').val(),
       content: this.editor.getValue()
     });
     // return 'It looks like you have been editing something -- if you leave before submitting your changes will be lost.';
@@ -355,107 +394,125 @@ SRCNotes.EditView = Backbone.View.extend({
       content: this.model.escape('content')
     }));
     this.$parent.append(this.el);
-    this.$el.find('textarea').focus();
+    // this.$('textarea').focus();
 
-    this.editor = CodeMirror.fromTextArea(this.$el.find('#text-editor').get(0), {
+    this.editor = CodeMirror.fromTextArea(this.$('#text-editor').get(0), {
       lineNumbers: false,
       lineWrapping: true,
-      mode: 'markdown'
+      mode: 'markdown',
+      autofocus: true
     });
-  
+
   },
-    
+
   saveContent: function (ev) {
     ev.preventDefault();
     var $target = $(ev.target);
 
     this.model.save({
-      title: $target.find('input').val(),
+      title: $target.find('.js-edit-note-name').val(),
       content: this.editor.getValue()
     }, {
-      success: function () {
-        new SRCNotes.InfoView({
-          message: 'Note saved.',
-          type: 'info'
-        });
-      }
+      success: this.saveSuccess
     });
   },
 
-  showList: function (ev) {
-    ev.preventDefault();
-    // remvoe event
-    window.onbeforeunload = null;
-
-    this.$el.find('.js-edit-form').submit();
-    Router.navigate('', { trigger: true });
-    this.hide();
-  },
-  
-  keyUp: function (ev) {
-    if (ev.keyCode === 27) {
-      this.showList(ev);
+  saveSuccess: function (model, resp, options) {
+    if (options.changed) {
+      new SRCNotes.InfoView({
+        message: 'Note saved.',
+        type: 'info'
+      });
+    }
+    if (this.showList) {
+      Backbone.history.navigate('', true);
+      this.hide();
+      this.showList = false;
     }
   },
+
+  goBack: function (ev) {
+    ev.preventDefault();
+    // remove event
+    window.onbeforeunload = null;
+    this.showList = true;
+    this.$('.js-edit-form').submit();
+  },
+
+  keyUp: function (ev) {
+    if (ev.which === 27) {
+      var $name = $(ev.target);
+      if ($name.hasClass('js-edit-note-name')) {
+        $name.val(this.model.get('title'));
+      } else {
+        this.goBack(ev);
+      }
+    }
+  },
+
   hide: function () {
     this.$el.hide();
     this.remove();
   },
+
   show: function () {
     this.$el.show();
   }
 });
 
 SRCNotes.InfoView = Backbone.View.extend({
-  
+
   tagName: 'div',
   className: 'message',
-  
+
   events: {
     'click .js-info-close': 'close'
   },
-  
+
   initialize: function (cfg) {
     _.bindAll(this, 'render', 'wayToClose', 'close');
 
     this.$main = $('#info-panel');
-    
+
     this.message = cfg.message;
     this.type = cfg.type || 'info';
-    
+
     this.render();
   },
-  
+
   render: function () {
-    
-    this.$el.html(template('tempate-inof-item', {
+
+    this.$el.html(template('tempate-info-item', {
       message: this.message,
       className: this.type + '-message'
     }));
-    
+
     this.$main.append(this.$el);
-    
+
     this.$main.show();
-    
+
     this.$el.show().transition({
       opacity: 1
     }, 1000);
     this.wayToClose();
   },
-  
+
   wayToClose: function () {
+    var _this = this;
     switch (this.type) {
-    case 'info':
-      var _this = this;
-      setTimeout(function () {
-        _this.close();
-      }, 4000);
-      break;
-    default:
-      
+      case 'info':
+        setTimeout(function () {
+          _this.close();
+        }, 4000);
+        break;
+      case 'error':
+        setTimeout(function () {
+          _this.close();
+        }, 15000);
+        break;
     }
   },
-  
+
   close: function (ev) {
     if (ev) {
       ev.preventDefault();
@@ -486,8 +543,7 @@ SRCNotes.ListView = Backbone.View.extend({
     _.bindAll(this, 'render', 'addItem',
               'clearSearch', 'moveCursor',
               'filterNotes', 'noteNameFocus',
-              'addEvent', 'changeEvent',
-              'invalidEvent');
+              'addEvent', 'changeEvent');
 
     this.items = cfg.items;
     if (!this.items.fetched) {
@@ -499,9 +555,8 @@ SRCNotes.ListView = Backbone.View.extend({
     this.listenTo(this.items, 'add', this.addEvent);
     this.listenTo(this.items, 'change', this.changeEvent);
     this.listenTo(this.items, 'reset', this.render);
-    this.listenTo(this.items, 'invalid', this.invalidEvent);
   },
-  
+
   addEvent: function (model) {
     // check to see if error message exists and do not render note view
     if (!model.validateError) {
@@ -513,39 +568,25 @@ SRCNotes.ListView = Backbone.View.extend({
       // save template for later
       this.templates[model.id] = tpl;
       // go to edit view
-      Router.navigate('note/' + model.get('id'), { trigger: true });
+      Router.navigate('note/' + model.get('id'), true);
     }
   },
-  
+
   changeEvent: function (model) {
-    model.set({modified: new Date()}, {silent: true});
-    if (this.templates[model.id]) {
-      this.$notes.prepend(this.templates[model.id].render().el);
-    } else {
-      console.log(model);
+    if (!model.validateError) {
+      model.set({modified: new Date()}, {silent: true});
+      if (this.templates[model.id]) {
+        this.$notes.prepend(this.templates[model.id].render().el);
+      } else {
+        console.log(model);
+      }
     }
-  },
-  
-  invalidEvent: function (model, msg) {
-    if (this.error) {
-      console.log(this.error);
-      return;
-    }
-    var _this = this;
-    this.error = new SRCNotes.InfoView({
-      message: msg,
-      type: 'error'
-    });
-    // wait for user to close the message dialog so that we can display it again
-    this.error.once('remove', function () {
-      _this.error = null;
-    });
   },
 
   render: function () {
     var $app = $(template('template-list-view-l'));
     this.$el.append($app);
-    this.$notes = this.$el.find('#notes');
+    this.$notes = this.$('#notes');
     this.items.sort();
     this.items.each(function (model) {
       var tpl = new SRCNotes.NoteView({
@@ -564,29 +605,42 @@ SRCNotes.ListView = Backbone.View.extend({
 
   // intercept key event to find if we need to react
   findItem: function (ev) {
-    if (ev.keyCode === 40) {
-      // focus notes 
+    var key = ev.which;
+
+    if (key === 40) {
+      // focus notes
       this.focusNotes(ev);
       ev.preventDefault();
-    } else if (ev.shiftKey && ev.keyCode === 13) {
+    } else if (ev.shiftKey && key === 13) {
       // shift + enter opens first note in list
       ev.preventDefault();
-      this.$notes.find('li.js-list-item:visible').eq(0).find('a').trigger('click');
+      this.$notes.find('li.js-list-item:visible').eq(0).find('.js-open-link').trigger('click');
+    } else if (key === 27) {
+      // clean name value
+      $(ev.target).val('');
     }
   },
 
   // @todo waite for user to stop writing name
   filterNotes: function () {
-    var name = helpers.escapeRegExp(this.$el.find('.js-note-name').val()),
-      pattern = new RegExp('^' + name);//, 'i'); case insensitive
+    var name = helpers.escapeRegExp(this.$('.js-note-name').val()),
+      pattern = new RegExp('^' + name),//, 'i'); case insensitive
+      listItems = 0;
 
     this.items.each(function (model) {
       if (!pattern.test(model.get('title'))) {
         model.trigger('hide');
       } else {
         model.trigger('show');
+        listItems++;
       }
     });
+    if (!listItems) {
+      console.log('List is empty.');
+      this.$notes.find('.js-list-info').show();
+    } else {
+      this.$notes.find('.js-list-info').hide();
+    }
   },
 
   addItem: function (ev) {
@@ -594,14 +648,14 @@ SRCNotes.ListView = Backbone.View.extend({
     var title = $('.js-note-name').val(),
     item = this.items.get(helpers.hash(title));
     if (item) {
-      Router.navigate('note/' + item.get('id'), { trigger: true });
+      Backbone.history.navigate('note/' + item.get('id'), true);
     } else {
       this.items.create({title: title}, {validate: true});
     }
   },
 
   clearSearch: function () {
-    this.$el.find('.js-note-name').val('');
+    this.$('.js-note-name').val('');
     this.filterNotes();
   },
 
@@ -658,7 +712,7 @@ SRCNotes.ListView = Backbone.View.extend({
       this.$visibleNotes.eq(this.index).addClass('focus');
       this.$notes.scrollToElement(this.$visibleNotes.eq(this.index));
     } else {
-      var nameInput = this.$el.find('.js-note-name');
+      var nameInput = this.$('.js-note-name');
       nameInput.focus();
       nameInput.get(0).selectionEnd = nameInput.val().length;
       this.index--;
@@ -691,15 +745,33 @@ SRCNotes.ListView = Backbone.View.extend({
   },
 
   show: function (reset) {
-    this.$el.find('.l-note').show();
+    this.$('.l-note').show();
     if (reset) {
       this.clearSearch();
-      this.$el.find('.js-note-name').focus().trigger('keyup');
+      this.$('.js-note-name').focus().trigger('keyup');
     }
   },
 
   hide: function () {
-    this.$el.find('.l-note').hide();
+    this.$('.l-note').hide();
+  }
+});
+
+SRCNotes.NoteInfoView = Backbone.View.extend({
+  tagName: 'div',
+  className: 'note-info',
+  
+  initialize: function () {
+    _.bindAll(this, 'render');
+    
+    this.$main = $('#srcnotes');
+    
+    this.render();
+  },
+  
+  render: function () {
+    this.$el.append(template('tempate-note-info-item'));
+    this.$main.append(this.el);
   }
 });
 
@@ -711,7 +783,8 @@ SRCNotes.NoteView = Backbone.View.extend({
     'click a.js-option-open': 'toggleOptionPanel',
     'click a.js-option-close': 'hideOption',
     'click a.js-option-delete': 'removeItem',
-    'click a.js-option-color': 'showColorPanel'
+    'click a.js-option-color': 'showColorPanel',
+    'click a.js-option-info': 'showNoteInfoPanel'
   },
 
   initialize: function (cfg) {
@@ -719,7 +792,7 @@ SRCNotes.NoteView = Backbone.View.extend({
             'toggleOptionPanel', 'hideOption',
             'removeItem', 'showColorPanel',
             'destroyEvent', 'showEvent',
-            'hideEvent');
+            'hideEvent', 'showNoteInfoPanel');
 
     this.listView = cfg.listView;
     
@@ -752,22 +825,22 @@ SRCNotes.NoteView = Backbone.View.extend({
 
   openNote: function (ev) {
     ev.preventDefault();
-    Router.navigate('note/' + this.model.get('id'), { trigger: true });
+    Router.navigate('note/' + this.model.get('id'), true);
   },
   
   toggleOptionPanel: function (ev) {
     ev.preventDefault();
     this.listView.removeActiveNote();
-    this.$el.find('.js-link-panel').toggle();
-    this.$el.find('.js-options-panel').toggle();
+    this.$('.js-link-panel').toggle();
+    this.$('.js-options-panel').toggle();
     
     this.listView.setActiveNote(this);
   },
   
   hideOption: function () {
-    var $option = this.$el.find('.js-options-panel');
+    var $option = this.$('.js-options-panel');
     if ($option.is(':visible')) {
-      this.$el.find('.js-link-panel').toggle();
+      this.$('.js-link-panel').toggle();
       $option.toggle();
     }
   },
@@ -790,6 +863,11 @@ SRCNotes.NoteView = Backbone.View.extend({
       x: ev.clientX,
       y: ev.clientY
     });
+  },
+  
+  showNoteInfoPanel: function (ev) {
+    ev.preventDefault();
+    new SRCNotes.NoteInfoView();
   }
 });
 
@@ -832,7 +910,7 @@ SRCNotes.Router = Backbone.Router.extend({
     } else {
       // console.error('note not found');
       // @todo need to open new page not found or redirect to list view
-      Router.navigate('', { trigger: true });
+      Backbone.history.navigate('', true);
     }
   },
 

@@ -37,7 +37,7 @@ SRCNotes.Router = Backbone.Router.extend({
     } else {
       // console.error('note not found');
       // @todo need to open new page not found or redirect to list view
-      Router.navigate('', { trigger: true });
+      Backbone.history.navigate('', true);
     }
   },
 

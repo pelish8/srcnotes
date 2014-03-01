@@ -10,7 +10,7 @@ $font-size-large: 1.5em;
 
 // my custom variables
 $font-color: rgb(224, 223, 220);
-$font-color-light: #b4b4b4;
+$font-color-dark: darken($font-color, 20%);
 
 $border-color: rgb(50, 49, 47);
 

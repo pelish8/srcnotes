@@ -99,11 +99,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-sass');
-    
+
   grunt.registerTask('default', function () {
     grunt.log.oklns('options:\n1. watch\n2. build');
   });
-    
+
   grunt.registerTask('build', 'Build app.', function () {
     grunt.task.run([
       'jshint',

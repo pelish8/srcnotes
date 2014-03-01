@@ -24,7 +24,7 @@ SRCNotes.ColorView = Backbone.View.extend({
       parentTop;
 
     this.$el.html(template('template-color'));
-    this.$el.find('.color-' + this.model.get('color')).addClass('is-active');
+    this.$('.color-' + this.model.get('color')).addClass('is-active');
     
     this.$main.append(this.$el);
     

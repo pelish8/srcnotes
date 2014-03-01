@@ -16,3 +16,7 @@ node_modules
 components
 node-webkit*
 .DS_Store
+
+#sublime text
+*.sublime-project
+*.sublime-workspace

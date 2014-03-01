@@ -20,10 +20,16 @@
 
 .note-name {
   border-color: $border-color;
-  color: $font-color-light;
+  color: $font-color-dark;
   background: $background-color;
   &:focus {
     color: $font-color;
   }
 }
 
+.list-view-info-message {
+//  background: $background-color;
+  padding: 0.5em 1em;
+  color: $font-color-dark;
+  display: none;
+}
