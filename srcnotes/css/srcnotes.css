@@ -333,9 +333,12 @@
   border-radius: 0.2em;
   text-align: center;
   margin: 0.5em;
-  opacity: 0; }
+  opacity: 0;
+  word-break: break-word; }
   .message a {
     float: right; }
+  .message .error-message {
+    color: #f2777a; }
 
 @media (min-width: 600px) {
   #info-panel {
@@ -346,6 +349,3 @@
   #info-panel {
     margin: 0;
     width: 100%; } }
-
-.error-message {
-  color: #f2777a; }

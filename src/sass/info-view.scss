@@ -13,9 +13,23 @@
   text-align: center;
   margin: 0.5em;
   opacity: 0;
+  word-break: break-word;
   a {
     float: right;
   }
+
+  .error-message {
+    color: $color-red;
+    // display: block;
+    // margin-right: 1em;
+  }
+  // .info-close {
+  //   margin: auto;
+  //   position: relative;
+  //   right: 0.6em;
+  //   top: 5;
+  // }
+
 }
 
 @media (min-width: 600px) {
@@ -30,8 +44,4 @@
     margin: 0;
     width: 100%;
   }
-}
-
-.error-message {
-  color: $color-red;
 }

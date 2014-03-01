@@ -215,7 +215,7 @@ SRCNotes.Note = Backbone.Model.extend({
     if (this.get('title') !== attrs.title) {
       var model = this.collection.findWhere({title: attrs.title});
       if (model) {
-        return 'Note with that name already exists.';
+        return 'Note with name "' + attrs.title + '" already exists.';
       }
     }
   }
