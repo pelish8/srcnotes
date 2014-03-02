@@ -1,5 +1,7 @@
 SRCNotes.Note = Backbone.Model.extend({
   defaults: {
+    title: '',
+    content: '',
     type: 'srcnote',
     color: 'default'
   },

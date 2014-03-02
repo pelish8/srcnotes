@@ -6,9 +6,18 @@
   .top-edit-menu {
     width: 100%;
     background: $background-color;
+    .back-button-wrapper {
+      position: absolute;
+      width: 8.5em;
+    }
+    .note-name-wrapper {
+      position: absolute;
+      left: 8.5em;
+      right: 0;
+    }
   }
 
-  .pure-button {
+  .back-button {
     width: 100%;
     border: 0;
     border-radius: 0;
@@ -21,7 +30,7 @@
       background: $hover-color;
     }
   }
-    
+
   .note-content {
     position: absolute;
     left: 0px;
@@ -43,15 +52,6 @@
       box-shadow: none;
       resize: none;
       border-top: solid 0.1em $border-color;
-    }
-  }
-
-  input.note-name {
-    border: solid 0.1em $background-color;
-    width: 100%;
-    &:focus {
-      border-color: desaturate($border-color, 30%);
-      border: solid 0.1em $background-color;
     }
   }
 }

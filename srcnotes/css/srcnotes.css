@@ -205,7 +205,14 @@
   .edit-form .top-edit-menu {
     width: 100%;
     background: #3a3a37; }
-  .edit-form .pure-button {
+    .edit-form .top-edit-menu .back-button-wrapper {
+      position: absolute;
+      width: 8.5em; }
+    .edit-form .top-edit-menu .note-name-wrapper {
+      position: absolute;
+      left: 8.5em;
+      right: 0; }
+  .edit-form .back-button {
     width: 100%;
     border: 0;
     border-radius: 0;
@@ -214,7 +221,7 @@
     font-size: 1.5em;
     padding: 0.69rem 0;
     border-right: solid 0.1em #3a3a37; }
-    .edit-form .pure-button:hover {
+    .edit-form .back-button:hover {
       background: #434240; }
   .edit-form .note-content {
     position: absolute;
@@ -236,20 +243,14 @@
       box-shadow: none;
       resize: none;
       border-top: solid 0.1em #32312f; }
-  .edit-form input.note-name {
-    border: solid 0.1em #3a3a37;
-    width: 100%; }
-    .edit-form input.note-name:focus {
-      border-color: #232c3e;
-      border: solid 0.1em #3a3a37; }
 
 .CodeMirror {
   width: 100%;
-  height: 99.99%;
+  height: 99.923%;
   border: none;
   border-radius: 0;
   font-family: Inconsolata, monospace;
-  color: #b4b4b4;
+  color: #e0dfdc;
   background: #3a3a37;
   box-shadow: none;
   resize: none;
@@ -269,21 +270,30 @@
     background: #42423f; }
   .CodeMirror .cm-header1 {
     font-size: 140%;
-    color: #e0dfdc; }
+    color: #6699cc; }
   .CodeMirror .cm-header2 {
-    font-size: 130%; }
+    font-size: 130%;
+    color: #6699cc; }
   .CodeMirror .cm-header3 {
-    font-size: 120%; }
+    font-size: 120%;
+    color: #6699cc; }
   .CodeMirror .cm-header4 {
-    font-size: 110%; }
+    font-size: 110%;
+    color: #6699cc; }
   .CodeMirror .cm-header5 {
-    font-size: 100%; }
+    font-size: 100%;
+    color: #6699cc; }
   .CodeMirror .cm-header6 {
-    font-size: 90%; }
+    font-size: 90%;
+    color: #6699cc; }
   .CodeMirror .cm-strong {
     font-weight: bold; }
-  .CodeMirror .cm-strong, .CodeMirror .cm-comment, .CodeMirror .cm-link, .CodeMirror .cm-variable-2, .CodeMirror .cm-variable-3 {
+  .CodeMirror .cm-strong, .CodeMirror .cm-variable-2, .CodeMirror .cm-variable-3, .CodeMirror .cm-keyword {
     color: #fff; }
+  .CodeMirror .cm-comment {
+    color: #ffcc66; }
+  .CodeMirror .cm-link {
+    color: #b294bb; }
   .CodeMirror .cm-tag, .CodeMirror .cm-attribute {
     color: #b4b4b4; }
   .CodeMirror .cm-string {
