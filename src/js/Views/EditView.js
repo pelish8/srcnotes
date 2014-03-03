@@ -13,7 +13,7 @@ SRCNotes.EditView = Backbone.View.extend({
   initialize: function (cfg) {
     _.bindAll(this, 'saveContent', 'render', 'keyUp',
                     'onBeforeunLoad', 'saveSuccess',
-                    'goBack');
+                    'goBack', 'remove');
 
     this.$parent = cfg.$parent;
 
@@ -35,7 +35,8 @@ SRCNotes.EditView = Backbone.View.extend({
   onBeforeunLoad: function () {
     this.model.save({
       title: this.$('.js-edit-note-name').val(),
-      content: this.editor.getValue()
+      // content: this.editor.getValue(),
+      content: this.$('#text-editor').val()
     });
     // return 'It looks like you have been editing something -- if you leave before submitting your changes will be lost.';
   },
@@ -49,14 +50,14 @@ SRCNotes.EditView = Backbone.View.extend({
       content: this.model.escape('content')
     }));
     this.$parent.append(this.el);
-    // this.$('textarea').focus();
+    this.$('#text-editor').focus();
 
-    this.editor = CodeMirror.fromTextArea(this.$('#text-editor').get(0), {
-      lineNumbers: false,
-      lineWrapping: true,
-      mode: 'markdown',
-      autofocus: true
-    });
+    // this.editor = CodeMirror.fromTextArea(this.$('#text-editor').get(0), {
+    //   lineNumbers: false,
+    //   lineWrapping: true,
+    //   mode: 'markdown',
+    //   autofocus: true
+    // });
 
   },
 
@@ -66,7 +67,8 @@ SRCNotes.EditView = Backbone.View.extend({
 
     this.model.save({
       title: $target.find('.js-edit-note-name').val(),
-      content: this.editor.getValue()
+      // content: this.editor.getValue()
+      content: this.$('#text-editor').val()
     }, {
       success: this.saveSuccess
     });
@@ -112,5 +114,9 @@ SRCNotes.EditView = Backbone.View.extend({
 
   show: function () {
     this.$el.show();
+  },
+
+  remove: function () {
+    this.$el.remove();
   }
 });

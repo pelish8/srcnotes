@@ -3,18 +3,18 @@
   border-top: solid 0.32em $border-color;
   padding: 0;
   margin: 0;
-  
+
   &:focus {
     outline: none;
   }
-  
+
   li.list-item {
     list-style-type: none;
     width: 100%;
     overflow: hidden;
     position: relative;
     background: $background-color;
-        
+
     &.focus {
       background: $hover-color;
     }
@@ -106,3 +106,22 @@
   }
 }
 
+@media (min-width: 768px), handheld and (orientation: landscape) {
+  #notes {
+    .list-item {
+      &.active-note {
+        background: $hover-color;
+      }
+    }
+  }
+
+  .link-panel {
+    .l-info-link {
+      display: none;
+    }
+
+    .l-open-link {
+      width: 100%;
+    }
+  }
+}

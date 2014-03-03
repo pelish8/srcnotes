@@ -86,7 +86,7 @@
   #srcnotes .color-purple a, #srcnotes a.color-purple {
     color: #b294bb; }
 
-.l-note {
+.l-note, #list-note-content {
   display: none; }
 
 .pure-form input.note-name {
@@ -112,6 +112,25 @@
   padding: 0.5em 1em;
   color: #b0aea6;
   display: none; }
+
+@media (min-width: 768px), handheld and (orientation: landscape) {
+  .l-note {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 23em; }
+  #list-note-content {
+    left: 26.2em;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #3a3a37;
+    display: block;
+    border-left: solid 0.32em #32312f;
+    margin: 0;
+    overflow: auto;
+    font-size: 0.875em; } }
 
 #notes {
   background: #32312f;
@@ -197,6 +216,14 @@
     .options-panel a.option-close i {
       margin: 0 45%; }
 
+@media (min-width: 768px), handheld and (orientation: landscape) {
+  #notes .list-item.active-note {
+    background: #434240; }
+  .link-panel .l-info-link {
+    display: none; }
+  .link-panel .l-open-link {
+    width: 100%; } }
+
 .edit-form {
   height: 100%;
   display: block;
@@ -244,13 +271,23 @@
       resize: none;
       border-top: solid 0.1em #32312f; }
 
+@media (min-width: 768px), handheld and (orientation: landscape) {
+  #list-note-content .edit-form .top-edit-menu {
+    font-size: 1.12em; }
+  #list-note-content .edit-form .note-content {
+    top: 3.6em; }
+  #list-note-content .edit-form .back-button-wrapper {
+    display: none; }
+  #list-note-content .edit-form .note-name-wrapper {
+    left: 0; } }
+
 .CodeMirror {
   width: 100%;
-  height: 99.923%;
+  height: 99.99%;
   border: none;
   border-radius: 0;
   font-family: Inconsolata, monospace;
-  color: #e0dfdc;
+  color: #b4b4b4;
   background: #3a3a37;
   box-shadow: none;
   resize: none;
@@ -270,30 +307,21 @@
     background: #42423f; }
   .CodeMirror .cm-header1 {
     font-size: 140%;
-    color: #6699cc; }
+    color: #e0dfdc; }
   .CodeMirror .cm-header2 {
-    font-size: 130%;
-    color: #6699cc; }
+    font-size: 130%; }
   .CodeMirror .cm-header3 {
-    font-size: 120%;
-    color: #6699cc; }
+    font-size: 120%; }
   .CodeMirror .cm-header4 {
-    font-size: 110%;
-    color: #6699cc; }
+    font-size: 110%; }
   .CodeMirror .cm-header5 {
-    font-size: 100%;
-    color: #6699cc; }
+    font-size: 100%; }
   .CodeMirror .cm-header6 {
-    font-size: 90%;
-    color: #6699cc; }
+    font-size: 90%; }
   .CodeMirror .cm-strong {
     font-weight: bold; }
-  .CodeMirror .cm-strong, .CodeMirror .cm-variable-2, .CodeMirror .cm-variable-3, .CodeMirror .cm-keyword {
+  .CodeMirror .cm-strong, .CodeMirror .cm-comment, .CodeMirror .cm-link, .CodeMirror .cm-variable-2, .CodeMirror .cm-variable-3 {
     color: #fff; }
-  .CodeMirror .cm-comment {
-    color: #ffcc66; }
-  .CodeMirror .cm-link {
-    color: #b294bb; }
   .CodeMirror .cm-tag, .CodeMirror .cm-attribute {
     color: #b4b4b4; }
   .CodeMirror .cm-string {

@@ -1,10 +1,12 @@
 SRCNotes.Router = Backbone.Router.extend({
   routes: {
     '': 'showListView',
-    'note/:id': 'showEditView'
+    'note/:id': 'showEditView',
+    ':id': 'showNoteOnListView'
   },
   initialize: function (cfg) {
-    _.bindAll(this, 'showEditView', 'openNote', 'showListView');
+    _.bindAll(this, 'showEditView', 'openNote', 'showListView',
+                    'showNoteOnListView');
     this.items = new SRCNotes.Notes();
 
     Backbone.history.start();
@@ -41,17 +43,35 @@ SRCNotes.Router = Backbone.Router.extend({
     }
   },
 
-  showListView: function () {
+  showListView: function (id) {
 
     if (!this.listView) {
       this.listView = new SRCNotes.ListView({
-        items: this.items
+        items: this.items,
+        listView: this.listView,
+        router: this,
+        activeNoteId: id
       });
     } else {
       this.listView.show(true);
+      this.listView.changeContent(id);
       if (this.editView) {
         this.editView.hide();
       }
+    }
+  },
+
+  showNoteOnListView: function (id) {
+    if (!this.$listContent) {
+      this.$listContent = $('#list-note-content');
+    }
+
+    if (this.$listContent.is(':visible')) {
+      this.showListView(id);
+    } else if (!this.$listContent.size()) {
+      this.showListView(id);
+    } else {
+      Backbone.history.navigate('note/' + id, true);
     }
   }
 });

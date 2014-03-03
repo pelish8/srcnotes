@@ -6,6 +6,7 @@
   .top-edit-menu {
     width: 100%;
     background: $background-color;
+    // font-size: 1.12em;
     .back-button-wrapper {
       position: absolute;
       width: 8.5em;
@@ -54,4 +55,23 @@
       border-top: solid 0.1em $border-color;
     }
   }
+}
+@media (min-width: 768px), handheld and (orientation: landscape) {
+  #list-note-content {
+    .edit-form {
+    .top-edit-menu {
+      font-size: 1.12em;
+    }
+
+    .note-content {
+      top: 3.6em;
+    }
+    .back-button-wrapper {
+      display: none;
+    }
+    .note-name-wrapper {
+      left: 0;
+    }
+  }
+}
 }

@@ -1,4 +1,4 @@
-.l-note {
+.l-note, #list-note-content {
   display: none;
 }
 .pure-form {
@@ -32,4 +32,27 @@
   padding: 0.5em 1em;
   color: $font-color-dark;
   display: none;
+}
+
+@media (min-width: 768px), handheld and (orientation: landscape) {
+  .l-note {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 23em;
+  }
+
+  #list-note-content {
+    left: 26.2em;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: $background-color;
+    display: block;
+    border-left: solid 0.32em $border-color;
+    margin: 0;
+    overflow: auto;
+    font-size: $font-size-small;
+  }
 }

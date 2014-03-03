@@ -18,7 +18,10 @@ SRCNotes.NoteView = Backbone.View.extend({
             'hideEvent', 'showNoteInfoPanel');
 
     this.listView = cfg.listView;
-    
+    if (cfg.active) {
+      this.$el.addClass('active-note');
+    }
+
     this.listenTo(this.model, 'destroy', this.destroyEvent);
     this.listenTo(this.model, 'show', this.showEvent);
     this.listenTo(this.model, 'hide', this.hideEvent);
@@ -29,11 +32,11 @@ SRCNotes.NoteView = Backbone.View.extend({
       this.remove();
     });
   },
-  
+
   showEvent: function () {
     this.$el.show();
   },
-  
+
   hideEvent: function () {
     this.$el.hide();
   },
@@ -48,18 +51,27 @@ SRCNotes.NoteView = Backbone.View.extend({
 
   openNote: function (ev) {
     ev.preventDefault();
-    Router.navigate('note/' + this.model.get('id'), true);
+    // var $listContent = $('.list-note-content:visible');
+    if (this.listView.isContentVisible()) {
+      // $listContent.html(this.model.get('content'));
+      this.listView.$('.active-note').removeClass('active-note');
+      this.$el.addClass('active-note');
+      Router.navigate('/' + this.model.get('id'), true);
+
+    } else {
+      Router.navigate('note/' + this.model.get('id'), true);
+    }
   },
-  
+
   toggleOptionPanel: function (ev) {
     ev.preventDefault();
     this.listView.removeActiveNote();
     this.$('.js-link-panel').toggle();
     this.$('.js-options-panel').toggle();
-    
+
     this.listView.setActiveNote(this);
   },
-  
+
   hideOption: function () {
     var $option = this.$('.js-options-panel');
     if ($option.is(':visible')) {
@@ -67,7 +79,7 @@ SRCNotes.NoteView = Backbone.View.extend({
       $option.toggle();
     }
   },
-  
+
   removeItem: function () {
     this.model.destroy({
       success: function () {
@@ -78,7 +90,7 @@ SRCNotes.NoteView = Backbone.View.extend({
       }
     });
   },
-  
+
   showColorPanel: function (ev) {
     new SRCNotes.ColorView({
       model: this.model,
@@ -87,7 +99,7 @@ SRCNotes.NoteView = Backbone.View.extend({
       y: ev.clientY
     });
   },
-  
+
   showNoteInfoPanel: function (ev) {
     ev.preventDefault();
     new SRCNotes.NoteInfoView();
